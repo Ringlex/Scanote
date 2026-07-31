@@ -4,50 +4,59 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
+# Flutter 3.24.3 / Dart 3.5.3 (patrz .fvmrc)
 environment:
-  sdk: '>=3.2.2 <4.0.0'
+  sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  adaptive_theme: 3.4.1
-  bloc_concurrency: 0.2.2
-  collection: 1.18.0
-  cupertino_icons: 1.0.6
-  flutter_bloc: 8.1.3
-  flutter_hooks: 0.20.3
+  adaptive_theme: ^3.4.1
+  bloc_concurrency: ^0.2.2
+  collection: ^1.18.0
+  cupertino_icons: ^1.0.6
+  flutter_bloc: ^8.1.3
+  flutter_hooks: ^0.20.3
   flutter_localizations:
     sdk: flutter
-  flutter_svg: 2.0.9
-  freezed_annotation: 2.4.1
-  get_it: 7.6.4
-  go_router: 12.1.1
-  google_fonts: 6.1.0
-  intl: 0.18.1
-  injectable: 2.3.2
-  shared_preferences: 2.2.2
-  flutter_secure_storage: 7.0.1
-  fpdart: 0.4.0
-  animated_bottom_navigation_bar: 1.3.0
-  sqflite: 2.3.0
-  path_provider: 2.1.1
+  flutter_svg: ^2.0.9
+  freezed_annotation: ^2.4.1
+  get_it: ^7.6.4
+  json_annotation: ^4.9.0
+  go_router: ^14.8.1
+  google_fonts: ^6.1.0
+  # przypięte na sztywno przez flutter_localizations we Flutterze 3.24.3
+  intl: 0.19.0
+  injectable: ^2.3.2
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+  fpdart: ^1.1.0
+  animated_bottom_navigation_bar: ^1.3.0
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  # importowany w db_helper.dart, dotąd tylko jako zależność przechodnia
+  path: ^1.9.0
+  table_calendar: ^3.1.2
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+  flutter_timezone: ^3.0.1
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  analyzer: 5.13.0
-  bloc_test: 9.1.5
-  build_runner: 2.4.7
-  envied_generator: 0.5.2
-  freezed: 2.4.5
-  lints: 3.0.0
-  mockingjay: 0.5.0
-  mocktail: 1.0.1
-  platform: 3.1.3
-  injectable_generator: 2.4.1
-  flutter_lints: 3.0.1
-  json_serializable: 6.6.0
-  
+  bloc_test: ^9.1.5
+  build_runner: ^2.4.7
+  envied_generator: ^0.5.2
+  freezed: ^2.4.5
+  mockingjay: ^0.6.0
+  mocktail: ^1.0.1
+  platform: ^3.1.3
+  injectable_generator: ^2.4.1
+  flutter_lints: ^5.0.0
+  json_serializable: ^6.6.0
+  flutter_launcher_icons: ^0.13.1
+
 
 flutter:
 
@@ -84,3 +93,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#2F2519"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  remove_alpha_ios: true

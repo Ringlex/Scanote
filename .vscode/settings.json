@@ -1,14 +1,15 @@
 {
-    "[dart]": {
-        "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120,
-        "editor.accessibilitySupport": "off",
-    },
-    "dart.lineLength": 120,
-    "svg.preview.background": "editor",
-    "dart.previewFlutterUiGuidesCustomTracking": true,
-    "dart.previewHotReloadOnSaveWatcher": true,
-    "dart.flutterSdkPaths": [
-        "/Users/bercik/fvm/default/bin"
-    ],
+  "[dart]": {
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 120,
+    "editor.accessibilitySupport": "off"
+  },
+  "dart.lineLength": 120,
+  "svg.preview.background": "editor",
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "dart.previewHotReloadOnSaveWatcher": true,
+  "dart.flutterSdkPaths": [
+    "/Users/bercik/fvm/default/bin"
+  ],
+  "dart.flutterSdkPath": ".fvm/versions/3.24.3"
 }

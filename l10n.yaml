@@ -1,0 +1,7 @@
+arb-dir: assets/l10n
+template-arb-file: translations_en.arb
+output-localization-file: translations.dart
+output-class: Translations
+output-dir: lib/core/l10n
+synthetic-package: false
+nullable-getter: false

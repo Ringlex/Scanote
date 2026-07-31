@@ -5,6 +5,7 @@ import 'package:note/core/l10n/translations.dart';
 import 'package:note/core/theme/theme.dart';
 import 'package:note/presentation/common/navigation_hub.dart';
 import 'package:note/presentation/components/auth/bloc/auth_bloc.dart';
+import 'package:note/presentation/components/locale/bloc/locale_bloc.dart';
 import 'package:note/presentation/injector_container.dart';
 import 'package:note/presentation/router/app_route_factory.dart';
 
@@ -32,22 +33,28 @@ class Application extends StatelessWidget {
         BlocProvider(
           create: (context) => injector<AuthBloc>()..add(const AuthEvent.onInitiated()),
         ),
+        BlocProvider(
+          create: (context) => injector<LocaleBloc>()..add(const LocaleEvent.onInitiated()),
+        ),
       ],
       child: AdaptiveTheme(
         light: appTheme.theme(LightPalette()),
         dark: appTheme.theme(DarkPalette()),
         initial: AdaptiveThemeMode.system,
-        builder: (theme, darkTheme) => MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          onGenerateTitle: (context) => Translations.of(context)!.appTitle,
-          localizationsDelegates: Translations.localizationsDelegates,
-          supportedLocales: Translations.supportedLocales,
-          theme: theme,
-          darkTheme: darkTheme,
-          routerConfig: _routerConfig,
-          builder: (context, child) => NavigationHub(
-            rootNavigatorKey: _rootNavigatorKey,
-            child: child,
+        builder: (theme, darkTheme) => BlocBuilder<LocaleBloc, LocaleState>(
+          builder: (context, localeState) => MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            onGenerateTitle: (context) => Translations.of(context).appTitle,
+            localizationsDelegates: Translations.localizationsDelegates,
+            supportedLocales: Translations.supportedLocales,
+            locale: localeState.locale,
+            theme: theme,
+            darkTheme: darkTheme,
+            routerConfig: _routerConfig,
+            builder: (context, child) => NavigationHub(
+              rootNavigatorKey: _rootNavigatorKey,
+              child: child,
+            ),
           ),
         ),
       ),

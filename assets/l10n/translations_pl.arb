@@ -1,0 +1,95 @@
+{
+    "@@locale": "pl",
+
+    "appTitle": "Note",
+    "splash": "Ekran startowy",
+
+    "commonSave": "Zapisz",
+    "commonCancel": "Anuluj",
+    "commonDelete": "Usuń",
+
+    "homeEmpty": "Nie masz jeszcze notatek. Dotknij +, aby napisać pierwszą.",
+    "homeLoadError": "Nie udało się wczytać notatek.",
+    "homeChecklistProgress": "{done}/{total} zrobione",
+    "@homeChecklistProgress": {
+        "placeholders": {
+            "done": { "type": "int" },
+            "total": { "type": "int" }
+        }
+    },
+
+    "noteEditorNewTitle": "Nowa notatka",
+    "noteEditorEditTitle": "Edytuj notatkę",
+    "noteEditorNameHint": "Nazwa notatki",
+    "noteEditorNameRequired": "Podaj nazwę notatki",
+    "noteEditorCategoryHint": "Kategoria (nieistniejąca zostanie utworzona)",
+    "noteEditorContentsHint": "Napisz notatkę…",
+    "noteEditorChecklist": "Lista zadań",
+    "noteEditorChecklistDescription": "Lista pozycji do odznaczania zamiast notatki tekstowej",
+    "noteEditorItemHint": "Pozycja listy",
+    "noteEditorAddItem": "Dodaj pozycję",
+    "noteEditorRemoveItem": "Usuń pozycję",
+    "noteEditorSaveError": "Nie udało się zapisać notatki",
+
+    "noteFormatBold": "Pogrubienie",
+    "noteFormatItalic": "Kursywa",
+    "noteFormatStrikethrough": "Przekreślenie",
+    "noteFormatCode": "Kod",
+    "noteFormatHeading": "Nagłówek",
+    "noteFormatBulletList": "Lista punktowana",
+    "noteFormatChecklist": "Lista zadań",
+
+    "noteDetailsEdit": "Edytuj notatkę",
+    "noteDetailsFavoriteAdd": "Dodaj do ulubionych",
+    "noteDetailsFavoriteRemove": "Usuń z ulubionych",
+    "noteDetailsMissing": "Ta notatka nie jest już dostępna.",
+    "noteDetailsEmptyChecklist": "Ta lista nie ma jeszcze żadnych pozycji.",
+
+    "favoritesTitle": "Ulubione",
+    "favoritesEmpty": "Notatki oznaczone jako ulubione pojawią się tutaj.",
+
+    "calendarEmpty": "Brak wydarzeń tego dnia. Dotknij +, aby dodać.",
+
+    "eventEditorNewTitle": "Nowe wydarzenie",
+    "eventEditorEditTitle": "Edytuj wydarzenie",
+    "eventEditorNameHint": "Nazwa wydarzenia",
+    "eventEditorNameRequired": "Podaj nazwę wydarzenia",
+    "eventEditorDescriptionHint": "Opis (opcjonalnie)",
+    "eventEditorDate": "Data",
+    "eventEditorTime": "Godzina",
+    "eventEditorDelete": "Usuń wydarzenie",
+    "eventEditorDeleteTitle": "Usunąć wydarzenie?",
+    "eventEditorDeleteMessage": "Wydarzenie i jego przypomnienie zostaną usunięte.",
+    "eventEditorSaveError": "Nie udało się zapisać wydarzenia",
+
+    "reminderNone": "Bez przypomnienia",
+    "reminderAtStart": "W czasie wydarzenia",
+    "reminderFiveMinutes": "5 minut wcześniej",
+    "reminderFifteenMinutes": "15 minut wcześniej",
+    "reminderThirtyMinutes": "30 minut wcześniej",
+    "reminderOneHour": "Godzinę wcześniej",
+    "reminderOneDay": "Dzień wcześniej",
+
+    "loginHeadline": "Witaj",
+    "loginSubtitle": "Zaloguj się, aby mieć notatki i wydarzenia zawsze przy sobie.",
+    "loginGoogleButton": "Zaloguj się przez Google",
+    "loginError": "Logowanie się nie powiodło. Spróbuj ponownie.",
+    "loginContinueAsGuest": "Kontynuuj bez konta",
+
+    "settingsTitle": "Ustawienia",
+    "settingsAppearance": "Wygląd",
+    "settingsTheme": "Motyw",
+    "settingsThemeSystem": "Systemowy",
+    "settingsLanguage": "Język",
+    "settingsLanguageSystem": "Język systemu",
+    "settingsNotes": "Notatki",
+    "settingsCategories": "Kategorie",
+    "settingsCategoriesDescription": "Zarządzaj kategoriami notatek",
+    "settingsReminders": "Przypomnienia",
+    "settingsRemindersDescription": "Powiadomienia o notatkach",
+    "settingsAccount": "Konto",
+    "settingsSignOut": "Wyloguj się",
+    "settingsGuest": "Bez konta",
+    "settingsAbout": "O aplikacji",
+    "settingsAppVersion": "Wersja aplikacji"
+}

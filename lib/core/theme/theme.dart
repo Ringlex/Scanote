@@ -1,4 +1,3 @@
-// ignore_for_file: overridden_fields
 import 'dart:math';
 
 import 'package:flutter/material.dart';

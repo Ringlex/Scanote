@@ -3,10 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note/core/theme/theme.dart';
+import 'package:note/presentation/screens/calendar/bloc/calendar_bloc.dart';
+import 'package:note/presentation/screens/calendar/calendar_screen.dart';
 import 'package:note/presentation/screens/dashboard/bloc/dashboard_bloc.dart';
 import 'package:note/presentation/screens/dashboard/widgets/dashboard_app_bar.dart';
+import 'package:note/presentation/screens/event_editor/event_editor_argument.dart';
+import 'package:note/presentation/screens/event_editor/event_editor_screen.dart';
+import 'package:note/presentation/screens/favorites/favorites_screen.dart';
+import 'package:note/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:note/presentation/screens/home/home_screen.dart';
-import 'package:note/presentation/screens/profile/profile_screen.dart';
+import 'package:note/presentation/screens/note_editor/note_editor_argument.dart';
+import 'package:note/presentation/screens/note_editor/note_editor_screen.dart';
+import 'package:note/presentation/screens/settings/settings_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({
@@ -30,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.transparent,
-            onPressed: () {},
+            onPressed: () => _onAddPressed(context),
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -55,12 +63,11 @@ class _DashboardNavigationBar extends StatelessWidget {
   const _DashboardNavigationBar({super.key});
 
   static const cornerRadius = 32.0;
-  static const itemsCount = 4;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBottomNavigationBar.builder(
-      itemCount: itemsCount,
+      itemCount: _navigationRoutes.length,
       tabBuilder: (index, isActive) => NavBarIcon(
         index: index,
         isActive: isActive,
@@ -99,26 +106,38 @@ class NavBarIcon extends StatelessWidget {
   }
 }
 
-int _calculateSelectedIndex(BuildContext context) {
-  final location = GoRouterState.of(context).matchedLocation;
-  if (location.startsWith(HomeScreen.routeName)) {
-    return 0;
-  } else if (location.startsWith(ProfileScreen.routeName)) {
-    return 1;
+void _onAddPressed(BuildContext context) {
+  final isOnCalendar = GoRouterState.of(context).matchedLocation.startsWith(CalendarScreen.routeName);
+
+  if (isOnCalendar) {
+    context.push(
+      EventEditorScreen.routeName,
+      extra: EventEditorArgument(calendarBloc: context.read<CalendarBloc>()),
+    );
+
+    return;
   }
 
-  return 0;
+  context.push(
+    NoteEditorScreen.routeName,
+    extra: NoteEditorArgument(homeBloc: context.read<HomeBloc>()),
+  );
+}
+
+const _navigationRoutes = [
+  HomeScreen.routeName,
+  CalendarScreen.routeName,
+  FavoritesScreen.routeName,
+  SettingsScreen.routeName,
+];
+
+int _calculateSelectedIndex(BuildContext context) {
+  final location = GoRouterState.of(context).matchedLocation;
+  final index = _navigationRoutes.indexWhere(location.startsWith);
+
+  return index < 0 ? 0 : index;
 }
 
 void _onItemTapped(int index, BuildContext context) {
-  switch (index) {
-    case 0:
-      context.go(HomeScreen.routeName);
-    case 1:
-      context.go(ProfileScreen.routeName);
-    case 2:
-      context.go(HomeScreen.routeName);
-    case 3:
-      context.go(ProfileScreen.routeName);
-  }
+  context.go(_navigationRoutes[index]);
 }

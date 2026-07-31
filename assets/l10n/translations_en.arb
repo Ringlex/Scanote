@@ -1,5 +1,7 @@
 {
-    "appTitle": "Application",
+    "@@locale": "en",
+
+    "appTitle": "Note",
     "@appTitle": {
         "description": "App name"
     },
@@ -7,6 +9,94 @@
     "@splash": {
         "description": "Splash screen name"
     },
-    "dashboardProfile": "Profile",
-    "dashboardHome": "Home"
+
+    "commonSave": "Save",
+    "commonCancel": "Cancel",
+    "commonDelete": "Delete",
+
+    "homeEmpty": "No notes yet. Tap + to write the first one.",
+    "homeLoadError": "Your notes could not be loaded.",
+    "homeChecklistProgress": "{done}/{total} done",
+    "@homeChecklistProgress": {
+        "description": "How many checklist items of a note are ticked off",
+        "placeholders": {
+            "done": { "type": "int" },
+            "total": { "type": "int" }
+        }
+    },
+
+    "noteEditorNewTitle": "New note",
+    "noteEditorEditTitle": "Edit note",
+    "noteEditorNameHint": "Note name",
+    "noteEditorNameRequired": "Give the note a name",
+    "noteEditorCategoryHint": "Category (a new one is created when it does not exist)",
+    "noteEditorContentsHint": "Write your note…",
+    "noteEditorChecklist": "Checklist",
+    "noteEditorChecklistDescription": "A list of items to tick off instead of a text note",
+    "noteEditorItemHint": "List item",
+    "noteEditorAddItem": "Add item",
+    "noteEditorRemoveItem": "Remove item",
+    "noteEditorSaveError": "The note could not be saved",
+
+    "noteFormatBold": "Bold",
+    "noteFormatItalic": "Italic",
+    "noteFormatStrikethrough": "Strikethrough",
+    "noteFormatCode": "Code",
+    "noteFormatHeading": "Heading",
+    "noteFormatBulletList": "Bullet list",
+    "noteFormatChecklist": "Checklist",
+
+    "noteDetailsEdit": "Edit note",
+    "noteDetailsFavoriteAdd": "Add to favorites",
+    "noteDetailsFavoriteRemove": "Remove from favorites",
+    "noteDetailsMissing": "This note is no longer available.",
+    "noteDetailsEmptyChecklist": "This checklist has no items yet.",
+
+    "favoritesTitle": "Favorites",
+    "favoritesEmpty": "Notes you mark as favorite will show up here.",
+
+    "calendarEmpty": "No events on this day. Tap + to add one.",
+
+    "eventEditorNewTitle": "New event",
+    "eventEditorEditTitle": "Edit event",
+    "eventEditorNameHint": "Event name",
+    "eventEditorNameRequired": "Give the event a name",
+    "eventEditorDescriptionHint": "Description (optional)",
+    "eventEditorDate": "Date",
+    "eventEditorTime": "Time",
+    "eventEditorDelete": "Delete event",
+    "eventEditorDeleteTitle": "Delete event?",
+    "eventEditorDeleteMessage": "The event and its reminder will be removed.",
+    "eventEditorSaveError": "The event could not be saved",
+
+    "reminderNone": "No reminder",
+    "reminderAtStart": "At the time of the event",
+    "reminderFiveMinutes": "5 minutes before",
+    "reminderFifteenMinutes": "15 minutes before",
+    "reminderThirtyMinutes": "30 minutes before",
+    "reminderOneHour": "1 hour before",
+    "reminderOneDay": "1 day before",
+
+    "loginHeadline": "Welcome",
+    "loginSubtitle": "Sign in to keep your notes and events with you.",
+    "loginGoogleButton": "Sign in with Google",
+    "loginError": "Signing in failed. Please try again.",
+    "loginContinueAsGuest": "Continue without an account",
+
+    "settingsTitle": "Settings",
+    "settingsAppearance": "Appearance",
+    "settingsTheme": "Theme",
+    "settingsThemeSystem": "System",
+    "settingsLanguage": "Language",
+    "settingsLanguageSystem": "System language",
+    "settingsNotes": "Notes",
+    "settingsCategories": "Categories",
+    "settingsCategoriesDescription": "Manage your note categories",
+    "settingsReminders": "Reminders",
+    "settingsRemindersDescription": "Notifications for your notes",
+    "settingsAccount": "Account",
+    "settingsSignOut": "Sign out",
+    "settingsGuest": "No account",
+    "settingsAbout": "About",
+    "settingsAppVersion": "App version"
 }
