@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The dark palette from lib/core/theme/theme.dart. -->
+    <color name="widget_background">#1B2F45</color>
+    <color name="widget_accent">#2FA37A</color>
+    <color name="widget_text">#FFFFFF</color>
+    <color name="widget_text_muted">#8FA3B8</color>
+</resources>

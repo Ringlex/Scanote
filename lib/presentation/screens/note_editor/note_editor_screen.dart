@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:note/core/l10n/translations_extension.dart';
 import 'package:note/core/theme/theme.dart';
 import 'package:note/data/model/note/checklist_item.dart';
 import 'package:note/data/model/note/note.dart';
+import 'package:note/data/model/note/scanned_text.dart';
+import 'package:note/data/model/note/note_share.dart';
+import 'package:note/data/ocr/ocr_service.dart';
+import 'package:note/data/qr/barcode_service.dart';
+import 'package:note/data/speech/speech_service.dart';
 import 'package:note/presentation/common/app_back_button.dart';
 import 'package:note/presentation/common/app_message.dart';
+import 'package:note/presentation/common/protection_message.dart';
+import 'package:note/data/protection/note_cipher.dart';
+import 'package:note/data/protection/note_protection_service.dart';
 import 'package:note/presentation/common/dimen.dart';
 import 'package:note/presentation/common/state_type.dart';
 import 'package:note/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:note/presentation/screens/note_editor/widgets/note_checklist_editor.dart';
 import 'package:note/presentation/screens/note_editor/widgets/note_format_toolbar.dart';
+import 'package:note/presentation/screens/note_editor/widgets/scan_source_sheet.dart';
+import 'package:note/presentation/injector_container.dart';
 
 class NoteEditorScreen extends StatefulWidget {
   static const routeName = '/note-editor';
 
-  const NoteEditorScreen({
-    this.note,
-    super.key,
-  });
+  const NoteEditorScreen({this.note, super.key});
 
   final Note? note;
 
@@ -37,6 +46,22 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
 
   late bool _isChecklist;
   late List<ChecklistItem> _checklistItems;
+  late DateTime? _date;
+
+  late bool _isProtected;
+
+  int _checklistRevision = 0;
+  bool _isScanning = false;
+
+  bool _isDictating = false;
+
+  String _dictationPrefix = '';
+  String _dictationSuffix = '';
+
+  static const _firstYear = 2000;
+  static const _lastYear = 2100;
+
+  static const _dictationButtonPadding = 88.0;
 
   @override
   void initState() {
@@ -51,10 +76,13 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
 
     _isChecklist = note?.isChecklist ?? false;
     _checklistItems = note?.checklistItems ?? const [];
+    _date = note?.date;
+    _isProtected = note?.isProtected ?? false;
   }
 
   @override
   void dispose() {
+    injector<SpeechService>().stop();
     _titleController.dispose();
     _categoryController.dispose();
     _contentsController.dispose();
@@ -69,15 +97,31 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       listener: _onSaveStateChanged,
       child: Scaffold(
         backgroundColor: context.palette.primaryColor,
+
+        floatingActionButton: _isChecklist ? null : _buildDictationButton(context),
         appBar: AppBar(
           backgroundColor: context.palette.primaryColor,
           foregroundColor: context.palette.textOnPrimaryColor,
           leading: const AppBackButton(),
           title: Text(
-            widget.note == null ? context.translations.noteEditorNewTitle : context.translations.noteEditorEditTitle,
+            widget.note?.id == null
+                ? context.translations.noteEditorNewTitle
+                : context.translations.noteEditorEditTitle,
             style: context.textTheme.titleMedium!.copyWith(color: context.palette.textOnPrimaryColor),
           ),
           actions: [
+            IconButton(
+              onPressed: _isScanning ? null : _onQrPressed,
+              tooltip: context.translations.noteQrImport,
+              icon: Icon(Icons.qr_code_scanner, color: context.palette.accentColor),
+            ),
+            IconButton(
+              onPressed: _isScanning ? null : _onScanPressed,
+              tooltip: context.translations.noteEditorScanTitle,
+              icon: _isScanning
+                  ? const _ScanSpinner()
+                  : Icon(Icons.document_scanner_outlined, color: context.palette.accentColor),
+            ),
             TextButton(
               onPressed: _onSavePressed,
               child: Text(
@@ -88,8 +132,13 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
           ],
         ),
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(Insets.large),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              Insets.large,
+              Insets.large,
+              Insets.large,
+              _isChecklist ? Insets.large : _dictationButtonPadding,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -99,29 +148,29 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                   Gap.large,
                   _NoteCategoryField(controller: _categoryController),
                   Gap.small,
-                  _ChecklistSwitch(
-                    isChecklist: _isChecklist,
-                    onChanged: _onChecklistChanged,
+                  _NoteDateField(date: _date, onPressed: _onDatePressed, onCleared: () => setState(() => _date = null)),
+                  Gap.small,
+                  _NoteLockField(
+                    isLocked: _isProtected,
+                    onPressed: _onLockPressed,
+                    onCleared: () => setState(() => _isProtected = false),
                   ),
                   Gap.small,
+                  _ChecklistSwitch(isChecklist: _isChecklist, onChanged: _onChecklistChanged),
+                  Gap.small,
                   if (!_isChecklist) ...[
-                    NoteFormatToolbar(
-                      controller: _contentsController,
-                      focusNode: _contentsFocusNode,
-                    ),
+                    NoteFormatToolbar(controller: _contentsController, focusNode: _contentsFocusNode),
+                    if (_isDictating) ...[Gap.small, const _DictationHint()],
                     Gap.medium,
                   ],
-                  Expanded(
-                    child: _isChecklist
-                        ? NoteChecklistEditor(
-                            initialItems: _checklistItems,
-                            onChanged: (items) => _checklistItems = items,
-                          )
-                        : _NoteContentsField(
-                            controller: _contentsController,
-                            focusNode: _contentsFocusNode,
-                          ),
-                  ),
+                  if (_isChecklist)
+                    NoteChecklistEditor(
+                      key: ValueKey(_checklistRevision),
+                      initialItems: _checklistItems,
+                      onChanged: (items) => _checklistItems = items,
+                    )
+                  else
+                    _NoteContentsField(controller: _contentsController, focusNode: _contentsFocusNode),
                 ],
               ),
             ),
@@ -131,24 +180,276 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     );
   }
 
+  Widget _buildDictationButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: _isScanning ? null : _onDictatePressed,
+      tooltip: _isDictating ? context.translations.noteEditorDictateStop : context.translations.noteEditorDictate,
+      backgroundColor: _isDictating ? context.palette.errorColor : context.palette.accentColor,
+      foregroundColor: context.palette.primaryColor,
+      child: Icon(_isDictating ? Icons.mic : Icons.mic_none),
+    );
+  }
+
   void _onChecklistChanged(bool isChecklist) {
+    if (isChecklist && _isDictating) {
+      _stopDictation();
+    }
+
     setState(() => _isChecklist = isChecklist);
   }
 
-  void _onSavePressed() {
+  Future<void> _onDictatePressed() async {
+    final speech = injector<SpeechService>();
+
+    if (_isDictating) {
+      _stopDictation();
+
+      return;
+    }
+
+    if (!await speech.prepare()) {
+      if (mounted) {
+        showAppMessage(context, message: context.translations.noteEditorDictateUnavailable);
+      }
+
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    final text = _contentsController.text;
+    final selection = _contentsController.selection;
+    final cursor = selection.isValid ? selection.start : text.length;
+
+    _dictationPrefix = text.substring(0, cursor);
+    _dictationSuffix = text.substring(cursor);
+
+    setState(() => _isDictating = true);
+
+    await speech.start(
+      languageCode: context.translations.localeName,
+      onResult: _onDictationResult,
+      onStopped: () {
+        if (mounted) {
+          setState(() => _isDictating = false);
+        }
+      },
+    );
+  }
+
+  void _onDictationResult(String text, bool isFinal) {
+    if (!mounted) {
+      return;
+    }
+
+    final prefix = _dictationPrefix.isEmpty || _dictationPrefix.endsWith(' ') || _dictationPrefix.endsWith('\n')
+        ? _dictationPrefix
+        : '$_dictationPrefix ';
+
+    _contentsController.value = TextEditingValue(
+      text: '$prefix$text$_dictationSuffix',
+      selection: TextSelection.collapsed(offset: prefix.length + text.length),
+    );
+  }
+
+  void _stopDictation() {
+    setState(() => _isDictating = false);
+    injector<SpeechService>().stop();
+  }
+
+  Future<void> _onSavePressed() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
+    var contents = _contentsController.text;
+    var checklistItems = _isChecklist ? _checklistItems : null;
+
+    if (_isProtected) {
+      final sealed = await _seal(contents: contents);
+
+      if (sealed == null || !mounted) {
+        return;
+      }
+
+      contents = sealed;
+      checklistItems = null;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
     context.read<HomeBloc>().add(
-          HomeEvent.onNoteSubmitted(
-            id: widget.note?.id,
-            title: _titleController.text,
-            contents: _contentsController.text,
-            categoryName: _categoryController.text,
-            checklistItems: _isChecklist ? _checklistItems : null,
-          ),
-        );
+      HomeEvent.onNoteSubmitted(
+        id: widget.note?.id,
+        title: _titleController.text,
+        contents: contents,
+        categoryName: _categoryController.text,
+        checklistItems: checklistItems,
+        date: _date,
+        isProtected: _isProtected,
+      ),
+    );
+  }
+
+  Future<void> _onLockPressed() async {
+    if (_isChecklist) {
+      showAppMessage(context, message: context.translations.noteProtectTextOnly);
+
+      return;
+    }
+
+    final isAvailable = await injector<NoteProtectionService>().isAvailable();
+
+    if (!mounted) {
+      return;
+    }
+
+    if (!isAvailable) {
+      showAppMessage(context, message: context.translations.noteProtectUnavailable);
+
+      return;
+    }
+
+    setState(() => _isProtected = true);
+  }
+
+  Future<String?> _seal({required String contents}) async {
+    try {
+      final key = await injector<NoteProtectionService>().unlockKey(
+        title: context.translations.noteProtectPromptTitle,
+        subtitle: context.translations.noteProtectPromptSubtitle,
+        cancel: context.translations.commonCancel,
+      );
+
+      return await NoteCipher.encrypt(plainText: contents, key: key);
+    } on ProtectionException catch (error) {
+      if (mounted) {
+        showAppMessage(context, message: protectionMessage(context, error.failure));
+      }
+
+      return null;
+    }
+  }
+
+  Future<void> _onScanPressed() async {
+    final source = await showScanSourceSheet(context, title: context.translations.noteEditorScanTitle);
+
+    if (source == null || !mounted) {
+      return;
+    }
+
+    final picked = await ImagePicker().pickImage(source: source);
+
+    if (picked == null || !mounted) {
+      return;
+    }
+
+    setState(() => _isScanning = true);
+
+    final result = await injector<OcrService>().readLines(imagePath: picked.path).run();
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() => _isScanning = false);
+
+    result.match((error) => showAppMessage(context, message: context.translations.noteEditorScanError), _applyScan);
+  }
+
+  Future<void> _onQrPressed() async {
+    final source = await showScanSourceSheet(context, title: context.translations.noteQrImport);
+
+    if (source == null || !mounted) {
+      return;
+    }
+
+    final picked = await ImagePicker().pickImage(source: source);
+
+    if (picked == null || !mounted) {
+      return;
+    }
+
+    setState(() => _isScanning = true);
+
+    final result = await injector<BarcodeService>().readFirstCode(imagePath: picked.path).run();
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() => _isScanning = false);
+
+    result.match((error) => showAppMessage(context, message: context.translations.noteQrError), _applyQr);
+  }
+
+  void _applyQr(String? payload) {
+    final shared = payload == null ? null : NoteShare.decode(payload);
+
+    if (shared == null) {
+      showAppMessage(context, message: context.translations.noteQrUnreadable);
+
+      return;
+    }
+
+    setState(() {
+      _titleController.text = shared.title;
+      _categoryController.text = shared.categoryName ?? '';
+      _isChecklist = shared.isChecklist;
+
+      if (shared.isChecklist) {
+        _checklistItems = shared.items;
+        _checklistRevision++;
+      } else {
+        _contentsController.text = shared.contents ?? '';
+      }
+    });
+
+    if (widget.note == null) {
+      _onSavePressed();
+    }
+  }
+
+  void _applyScan(List<String> lines) {
+    final scanned = TextScan.classify(lines);
+
+    if (scanned.isEmpty) {
+      showAppMessage(context, message: context.translations.noteEditorScanEmpty);
+
+      return;
+    }
+
+    setState(() {
+      if (scanned.kind == ScannedTextKind.checklist) {
+        _isChecklist = true;
+        _checklistItems = [..._checklistItems, ...scanned.items];
+        _checklistRevision++;
+
+        return;
+      }
+
+      _isChecklist = false;
+      _contentsController.text = _contentsController.text.isEmpty
+          ? scanned.text
+          : '${_contentsController.text}\n${scanned.text}';
+    });
+  }
+
+  Future<void> _onDatePressed() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _date ?? DateTime.now(),
+      firstDate: DateTime(_firstYear),
+      lastDate: DateTime(_lastYear, 12, 31),
+    );
+
+    if (picked != null) {
+      setState(() => _date = picked);
+    }
   }
 
   void _onSaveStateChanged(BuildContext context, HomeState state) {
@@ -166,11 +467,127 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   }
 }
 
+class _DictationHint extends StatelessWidget {
+  const _DictationHint();
+
+  static const _iconSize = 16.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(Icons.graphic_eq, size: _iconSize, color: context.palette.errorColor),
+        HorizontalGap.small,
+        Text(
+          context.translations.noteEditorDictateListening,
+          style: context.textTheme.bodyMedium!.copyWith(color: context.palette.errorColor),
+        ),
+      ],
+    );
+  }
+}
+
+class _ScanSpinner extends StatelessWidget {
+  const _ScanSpinner();
+
+  static const _size = 20.0;
+  static const _width = 2.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _size,
+      height: _size,
+      child: CircularProgressIndicator(strokeWidth: _width, color: context.palette.accentColor),
+    );
+  }
+}
+
+class _NoteDateField extends StatelessWidget {
+  const _NoteDateField({required this.date, required this.onPressed, required this.onCleared});
+
+  final DateTime? date;
+  final VoidCallback onPressed;
+  final VoidCallback onCleared;
+
+  static const _cornerRadius = 16.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final date = this.date;
+
+    return Material(
+      color: context.palette.cardColor,
+      borderRadius: BorderRadius.circular(_cornerRadius),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        onTap: onPressed,
+        leading: Icon(Icons.event, color: context.palette.accentColor),
+        title: Text(
+          context.translations.noteEditorDate,
+          style: context.textTheme.bodyMedium!.copyWith(color: context.palette.inactiveColor),
+        ),
+        subtitle: Text(
+          date == null
+              ? context.translations.noteEditorDateNone
+              : DateFormat.yMMMMEEEEd(context.translations.localeName).format(date),
+          style: context.textTheme.bodyLarge!.copyWith(color: context.palette.textOnPrimaryColor),
+        ),
+        trailing: date == null
+            ? null
+            : IconButton(
+                onPressed: onCleared,
+                tooltip: context.translations.noteEditorDateClear,
+                icon: Icon(Icons.close, color: context.palette.inactiveColor),
+              ),
+      ),
+    );
+  }
+}
+
+class _NoteLockField extends StatelessWidget {
+  const _NoteLockField({required this.isLocked, required this.onPressed, required this.onCleared});
+
+  final bool isLocked;
+  final VoidCallback onPressed;
+  final VoidCallback onCleared;
+
+  static const _cornerRadius = 16.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.palette.cardColor,
+      borderRadius: BorderRadius.circular(_cornerRadius),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        onTap: onPressed,
+        leading: Icon(
+          isLocked ? Icons.fingerprint : Icons.lock_open,
+          color: isLocked ? context.palette.accentColor : context.palette.inactiveColor,
+        ),
+        title: Text(
+          context.translations.noteEditorLock,
+          style: context.textTheme.bodyMedium!.copyWith(color: context.palette.inactiveColor),
+        ),
+        subtitle: Text(
+          isLocked ? context.translations.noteEditorLockOn : context.translations.noteEditorLockOff,
+          style: context.textTheme.bodyLarge!.copyWith(color: context.palette.textOnPrimaryColor),
+        ),
+        trailing: isLocked
+            ? IconButton(
+                onPressed: onCleared,
+                tooltip: context.translations.noteEditorLockRemove,
+                icon: Icon(Icons.close, color: context.palette.inactiveColor),
+              )
+            : null,
+      ),
+    );
+  }
+}
+
 class _ChecklistSwitch extends StatelessWidget {
-  const _ChecklistSwitch({
-    required this.isChecklist,
-    required this.onChanged,
-  });
+  const _ChecklistSwitch({required this.isChecklist, required this.onChanged});
 
   final bool isChecklist;
   final ValueChanged<bool> onChanged;
@@ -247,10 +664,7 @@ class _NoteCategoryField extends StatelessWidget {
             prefixIcon: Icon(Icons.label_outline, color: context.palette.accentColor),
             filled: true,
             fillColor: context.palette.cardColor,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(_cornerRadius),
-              borderSide: BorderSide.none,
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(_cornerRadius), borderSide: BorderSide.none),
           ),
         ),
         BlocBuilder<HomeBloc, HomeState>(
@@ -265,9 +679,7 @@ class _NoteCategoryField extends StatelessWidget {
                       for (final category in state.categories)
                         ActionChip(
                           label: Text(category.name),
-                          labelStyle: context.textTheme.titleSmall!.copyWith(
-                            color: context.palette.textOnPrimaryColor,
-                          ),
+                          labelStyle: context.textTheme.titleSmall!.copyWith(color: context.palette.textOnPrimaryColor),
                           backgroundColor: context.palette.cardColor,
                           side: BorderSide.none,
                           onPressed: () => controller.text = category.name,
@@ -282,22 +694,20 @@ class _NoteCategoryField extends StatelessWidget {
 }
 
 class _NoteContentsField extends StatelessWidget {
-  const _NoteContentsField({
-    required this.controller,
-    required this.focusNode,
-  });
+  const _NoteContentsField({required this.controller, required this.focusNode});
 
   final TextEditingController controller;
   final FocusNode focusNode;
+
+  static const _minLines = 8;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       focusNode: focusNode,
+      minLines: _minLines,
       maxLines: null,
-      expands: true,
-      textAlignVertical: TextAlignVertical.top,
       keyboardType: TextInputType.multiline,
       textCapitalization: TextCapitalization.sentences,
       style: context.textTheme.bodyLarge!.copyWith(color: context.palette.textOnPrimaryColor),

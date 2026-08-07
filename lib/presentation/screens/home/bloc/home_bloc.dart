@@ -8,6 +8,7 @@ import 'package:note/data/model/categories/category.dart';
 import 'package:note/data/model/error_detail.dart';
 import 'package:note/data/model/note/checklist_item.dart';
 import 'package:note/data/model/note/note.dart';
+import 'package:note/data/model/search_match.dart';
 import 'package:note/data/repository/note_repository.dart';
 import 'package:note/presentation/common/state_type.dart';
 import 'package:note/presentation/screens/home/home_argument.dart';
@@ -17,14 +18,20 @@ part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc({
-    required HomeArgument argument,
-    required NoteRepository noteRepository,
-  })  : _noteRepository = noteRepository,
-        super(HomeState.initial(argument: argument)) {
+  HomeBloc({required HomeArgument argument, required NoteRepository noteRepository})
+    : _noteRepository = noteRepository,
+      super(HomeState.initial(argument: argument)) {
     on<_OnInitiated>(_onInitiated);
     on<_OnNoteSubmitted>(_onNoteSubmitted);
     on<_OnFavoriteToggled>(_onFavoriteToggled);
+    on<_OnNoteDeleted>(_onNoteDeleted);
+    on<_OnNoteRestored>(_onNoteRestored);
+    on<_OnNotePurged>(_onNotePurged);
+    on<_OnBinEmptied>(_onBinEmptied);
+    on<_OnSearchChanged>(_onSearchChanged);
+    on<_OnCategoryCreated>(_onCategoryCreated);
+    on<_OnCategoryRenamed>(_onCategoryRenamed);
+    on<_OnCategoryDeleted>(_onCategoryDeleted);
     on<_OnChecklistItemToggled>(_onChecklistItemToggled);
   }
 
@@ -33,6 +40,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onInitiated(_OnInitiated event, Emitter<HomeState> emit) async {
     emit(state.copyWith(type: StateType.loading));
 
+    await _noteRepository.purgeExpiredBin().run();
     await _loadContent(emit);
   }
 
@@ -40,18 +48,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(state.copyWith(saveType: StateType.loading));
 
     final categoryName = event.categoryName?.trim() ?? '';
-    final result = await _resolveCategory(categoryName)
-        .flatMap((category) => _noteRepository.saveNote(note: _buildNote(event, category)))
-        .run();
+    final result = await _resolveCategory(
+      categoryName,
+    ).flatMap((category) => _noteRepository.saveNote(note: _buildNote(event, category))).run();
 
-    await result.match(
-      (error) async => emit(state.copyWith(saveType: StateType.error)),
-      (_) async {
-        await _loadContent(emit);
-        emit(state.copyWith(saveType: StateType.success));
-        emit(state.copyWith(saveType: StateType.initial));
-      },
-    );
+    await result.match((error) async => emit(state.copyWith(saveType: StateType.error)), (_) async {
+      await _loadContent(emit);
+      emit(state.copyWith(saveType: StateType.success));
+      emit(state.copyWith(saveType: StateType.initial));
+    });
   }
 
   Future<void> _onFavoriteToggled(_OnFavoriteToggled event, Emitter<HomeState> emit) async {
@@ -62,6 +67,68 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     await _noteRepository.saveNote(note: note.copyWith(isFavorite: !note.isFavorite)).run();
+    await _loadContent(emit);
+  }
+
+  Future<void> _onSearchChanged(_OnSearchChanged event, Emitter<HomeState> emit) async {
+    emit(state.copyWith(query: event.query));
+  }
+
+  Future<void> _onCategoryCreated(_OnCategoryCreated event, Emitter<HomeState> emit) async {
+    final name = event.name.trim();
+
+    if (name.isEmpty) {
+      return;
+    }
+
+    await _noteRepository.resolveCategory(name: name).run();
+    await _loadContent(emit);
+  }
+
+  Future<void> _onCategoryRenamed(_OnCategoryRenamed event, Emitter<HomeState> emit) async {
+    final name = event.name.trim();
+    final category = state.categories.firstWhereOrNull((category) => category.id == event.id);
+
+    if (name.isEmpty || category == null || category.name == name) {
+      return;
+    }
+
+    final result = await _noteRepository.findCategory(name: name).run();
+    final existing = result.getOrElse((error) => null);
+
+    if (existing != null && existing.id != category.id) {
+      emit(state.copyWith(saveType: StateType.error));
+      emit(state.copyWith(saveType: StateType.initial));
+
+      return;
+    }
+
+    await _noteRepository.renameCategory(category: category.copyWith(name: name)).run();
+    await _loadContent(emit);
+  }
+
+  Future<void> _onCategoryDeleted(_OnCategoryDeleted event, Emitter<HomeState> emit) async {
+    await _noteRepository.deleteCategory(id: event.id).run();
+    await _loadContent(emit);
+  }
+
+  Future<void> _onNoteDeleted(_OnNoteDeleted event, Emitter<HomeState> emit) async {
+    await _noteRepository.deleteNote(id: event.noteId).run();
+    await _loadContent(emit);
+  }
+
+  Future<void> _onNoteRestored(_OnNoteRestored event, Emitter<HomeState> emit) async {
+    await _noteRepository.restoreNote(id: event.noteId).run();
+    await _loadContent(emit);
+  }
+
+  Future<void> _onNotePurged(_OnNotePurged event, Emitter<HomeState> emit) async {
+    await _noteRepository.purgeNote(id: event.noteId).run();
+    await _loadContent(emit);
+  }
+
+  Future<void> _onBinEmptied(_OnBinEmptied event, Emitter<HomeState> emit) async {
+    await _noteRepository.emptyBin().run();
     await _loadContent(emit);
   }
 
@@ -78,9 +145,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       return;
     }
 
-    items[event.itemIndex] = items[event.itemIndex].copyWith(
-      isDone: !items[event.itemIndex].isDone,
-    );
+    items[event.itemIndex] = items[event.itemIndex].copyWith(isDone: !items[event.itemIndex].isDone);
 
     await _noteRepository.saveNote(note: note.copyWith(todoList: Checklist.encode(items))).run();
     await _loadContent(emit);
@@ -96,6 +161,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       todoList: checklistItems == null ? null : Checklist.encode(checklistItems),
       noteContents: checklistItems == null ? event.contents : null,
       categoryId: category?.id,
+      date: event.date,
+      isProtected: event.isProtected,
     );
   }
 
@@ -109,9 +176,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final result = await _noteRepository
         .getNotes()
         .flatMap(
-          (notes) => _noteRepository.getCategories().map(
-                (categories) => (notes: notes, categories: categories),
-              ),
+          (notes) => _noteRepository.getCategories().flatMap(
+            (categories) => _noteRepository.getDeletedNotes().map(
+              (deletedNotes) => (notes: notes, categories: categories, deletedNotes: deletedNotes),
+            ),
+          ),
         )
         .run();
 
@@ -122,6 +191,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           type: content.notes.isEmpty ? StateType.empty : StateType.loaded,
           notes: content.notes,
           categories: content.categories,
+          deletedNotes: content.deletedNotes,
         ),
       ),
     );

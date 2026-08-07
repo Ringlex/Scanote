@@ -19,14 +19,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required DBHelper dbHelper,
     required NotificationService notificationService,
     required AuthRepository authRepository,
-  })  : _dbHelper = dbHelper,
-        _notificationService = notificationService,
-        _authRepository = authRepository,
-        super(AuthState.initial()) {
+  }) : _dbHelper = dbHelper,
+       _notificationService = notificationService,
+       _authRepository = authRepository,
+       super(AuthState.initial()) {
     on<_OnInitiated>(_onInitiated);
     on<_OnSignInRequested>(_onSignInRequested);
     on<_OnGuestRequested>(_onGuestRequested);
     on<_OnSignOutRequested>(_onSignOutRequested);
+    on<_OnDisconnectRequested>(_onDisconnectRequested);
   }
 
   final DBHelper _dbHelper;
@@ -63,25 +64,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.match(
       (error) => emit(state.copyWith(signInType: StateType.error)),
-      (user) => emit(
-        state.copyWith(
-          signInType: user == null ? StateType.initial : StateType.success,
-          user: user,
-        ),
-      ),
+      (user) => emit(state.copyWith(signInType: user == null ? StateType.initial : StateType.success, user: user)),
     );
+  }
+
+  Future<void> _onDisconnectRequested(_OnDisconnectRequested event, Emitter<AuthState> emit) async {
+    await _authRepository.disconnect().run();
+    await _authRepository.writeIsGuest(isGuest: false).run();
+
+    emit(state.copyWith(user: null, isGuest: false, signInType: StateType.initial));
   }
 
   Future<void> _onSignOutRequested(_OnSignOutRequested event, Emitter<AuthState> emit) async {
     await _authRepository.signOut().run();
     await _authRepository.writeIsGuest(isGuest: false).run();
 
-    emit(
-      state.copyWith(
-        user: null,
-        isGuest: false,
-        signInType: StateType.initial,
-      ),
-    );
+    emit(state.copyWith(user: null, isGuest: false, signInType: StateType.initial));
   }
 }

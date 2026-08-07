@@ -1,7 +1,7 @@
 part of 'calendar_bloc.dart';
 
 @freezed
-class CalendarState with _$CalendarState {
+abstract class CalendarState with _$CalendarState {
   const factory CalendarState({
     required StateType type,
     required StateType saveType,
@@ -26,8 +26,15 @@ class CalendarState with _$CalendarState {
     );
   }
 
-  List<Event> eventsOf(DateTime day) =>
-      events.where((event) => _isSameDay(event.startAt, day)).toList();
+  List<Event> eventsOf(DateTime day) => events.where((event) => _isSameDay(event.startAt, day)).toList();
 
   List<Event> get selectedDayEvents => eventsOf(selectedDay);
+
+  Event? duplicateOf({required String title, required DateTime startAt}) {
+    final wanted = title.trim().toLowerCase();
+
+    return events.firstWhereOrNull(
+      (event) => event.title.trim().toLowerCase() == wanted && _isSameDay(event.startAt, startAt),
+    );
+  }
 }

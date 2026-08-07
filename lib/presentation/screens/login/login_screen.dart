@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:note/core/l10n/translations_extension.dart';
 import 'package:note/core/theme/theme.dart';
-import 'package:note/presentation/common/app_assets.dart';
 import 'package:note/presentation/common/app_message.dart';
 import 'package:note/presentation/common/dimen.dart';
 import 'package:note/presentation/common/state_type.dart';
 import 'package:note/presentation/components/auth/bloc/auth_bloc.dart';
+import 'package:note/presentation/common/widgets/app_wordmark.dart';
 
 class LoginScreen extends StatelessWidget {
   static const routeName = '/login';
 
   const LoginScreen({super.key});
 
-  static const _logoSize = Size(180, 90);
+  static const _wordmarkSize = 44.0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class LoginScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Spacer(),
-                Center(child: context.svgImage(AppAssets.logoText, size: _logoSize)),
+                const Center(child: AppWordmark(fontSize: _wordmarkSize)),
                 Gap.xxxLarge,
                 Text(
                   context.translations.loginHeadline,

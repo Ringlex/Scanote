@@ -62,7 +62,8 @@ import 'translations_pl.dart';
 /// be consistent with the languages listed in the Translations.supportedLocales
 /// property.
 abstract class Translations {
-  Translations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  Translations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class Translations {
     return Localizations.of<Translations>(context, Translations)!;
   }
 
-  static const LocalizationsDelegate<Translations> delegate = _TranslationsDelegate();
+  static const LocalizationsDelegate<Translations> delegate =
+      _TranslationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,23 +84,24 @@ abstract class Translations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('pl')
+    Locale('pl'),
   ];
 
   /// App name
   ///
   /// In en, this message translates to:
-  /// **'Note'**
+  /// **'Scanote'**
   String get appTitle;
 
   /// Splash screen name
@@ -119,17 +122,269 @@ abstract class Translations {
   /// **'Cancel'**
   String get commonCancel;
 
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
   /// No description provided for @commonDelete.
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get commonDelete;
 
+  /// No description provided for @commonShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get commonShare;
+
+  /// No description provided for @commonUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get commonUndo;
+
+  /// No description provided for @backupPassphraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup passphrase'**
+  String get backupPassphraseTitle;
+
+  /// No description provided for @backupPassphraseExportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your protected notes are sealed with this before they go to Drive. Without it they cannot be read back on another phone — not even by you.'**
+  String get backupPassphraseExportHint;
+
+  /// No description provided for @backupPassphraseImportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup holds protected notes. Give the passphrase they were sealed with.'**
+  String get backupPassphraseImportHint;
+
+  /// No description provided for @backupPassphraseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase'**
+  String get backupPassphraseHint;
+
+  /// No description provided for @backupPassphraseRepeatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat the passphrase'**
+  String get backupPassphraseRepeatHint;
+
+  /// No description provided for @backupPassphraseTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'At least {count} characters'**
+  String backupPassphraseTooShort(int count);
+
+  /// No description provided for @backupPassphraseMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The two passphrases are different'**
+  String get backupPassphraseMismatch;
+
+  /// No description provided for @backupWrongPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'That passphrase does not open this backup'**
+  String get backupWrongPassphrase;
+
+  /// No description provided for @homeWriteNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a note'**
+  String get homeWriteNote;
+
+  /// No description provided for @noteProtectTextOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only text notes can be protected, not checklists.'**
+  String get noteProtectTextOnly;
+
+  /// No description provided for @noteProtectPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Protected note'**
+  String get noteProtectPromptTitle;
+
+  /// No description provided for @noteProtectPromptSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prove it is you to seal this note'**
+  String get noteProtectPromptSubtitle;
+
+  /// No description provided for @noteProtectOpenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prove it is you to open this note'**
+  String get noteProtectOpenSubtitle;
+
+  /// No description provided for @noteProtectUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up a fingerprint or a screen lock first, so there is something to guard the note with.'**
+  String get noteProtectUnavailable;
+
+  /// No description provided for @noteProtectCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'The note stays as it was'**
+  String get noteProtectCancelled;
+
+  /// No description provided for @noteProtectKeyLost.
+  ///
+  /// In en, this message translates to:
+  /// **'The key to this note is gone from this phone and cannot be brought back. The note cannot be read again.'**
+  String get noteProtectKeyLost;
+
+  /// No description provided for @noteProtectUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'This note is marked as protected but its contents were never encrypted. Open it in the editor, turn protection off, and set it again.'**
+  String get noteProtectUnreadable;
+
+  /// No description provided for @noteProtectFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The note could not be opened'**
+  String get noteProtectFailed;
+
+  /// No description provided for @noteProtectPinDropped.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 note lost its PIN in this update. Protect it again to have it encrypted properly.} other{{count} notes lost their PIN in this update. Protect them again to have them encrypted properly.}}'**
+  String noteProtectPinDropped(int count);
+
+  /// No description provided for @scanPagesTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 page scanned} other{{count} pages scanned}}'**
+  String scanPagesTaken(int count);
+
+  /// No description provided for @scanAddPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan another page'**
+  String get scanAddPage;
+
+  /// No description provided for @scanFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'That is the whole thing'**
+  String get scanFinish;
+
+  /// No description provided for @widgetRecentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent notes'**
+  String get widgetRecentTitle;
+
+  /// No description provided for @widgetEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes yet.'**
+  String get widgetEmpty;
+
+  /// No description provided for @noteMovedToBin.
+  ///
+  /// In en, this message translates to:
+  /// **'Note moved to the bin'**
+  String get noteMovedToBin;
+
+  /// No description provided for @binTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bin'**
+  String get binTitle;
+
+  /// No description provided for @binEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The bin is empty.'**
+  String get binEmpty;
+
+  /// No description provided for @binRetentionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes here are deleted for good 30 days after they were thrown away.'**
+  String get binRetentionHint;
+
+  /// No description provided for @binPurgesIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Goes today} one{Goes in 1 day} other{Goes in {count} days}}'**
+  String binPurgesIn(int count);
+
+  /// No description provided for @binRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get binRestore;
+
+  /// No description provided for @binNoteRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Note restored'**
+  String get binNoteRestored;
+
+  /// No description provided for @binDeleteForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for good'**
+  String get binDeleteForever;
+
+  /// No description provided for @binEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty the bin'**
+  String get binEmptyAction;
+
+  /// No description provided for @binDeleteForeverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for good?'**
+  String get binDeleteForeverTitle;
+
+  /// No description provided for @binDeleteForeverMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{title}\" cannot be brought back.'**
+  String binDeleteForeverMessage(String title);
+
+  /// No description provided for @binEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty the bin?'**
+  String get binEmptyTitle;
+
+  /// No description provided for @binEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count} notes in the bin will be deleted for good.'**
+  String binEmptyMessage(int count);
+
   /// No description provided for @homeEmpty.
   ///
   /// In en, this message translates to:
   /// **'No notes yet. Tap + to write the first one.'**
   String get homeEmpty;
+
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes'**
+  String get homeSearchHint;
+
+  /// No description provided for @homeSearchEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing matches \"{query}\"'**
+  String homeSearchEmpty(String query);
 
   /// No description provided for @homeLoadError.
   ///
@@ -209,11 +464,125 @@ abstract class Translations {
   /// **'Remove item'**
   String get noteEditorRemoveItem;
 
+  /// No description provided for @noteEditorDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date in the calendar'**
+  String get noteEditorDate;
+
+  /// No description provided for @noteEditorDateNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get noteEditorDateNone;
+
+  /// No description provided for @noteEditorDateClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear the date'**
+  String get noteEditorDateClear;
+
+  /// No description provided for @noteDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete note?'**
+  String get noteDeleteTitle;
+
+  /// No description provided for @noteDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{title}\" will be removed for good.'**
+  String noteDeleteMessage(String title);
+
   /// No description provided for @noteEditorSaveError.
   ///
   /// In en, this message translates to:
   /// **'The note could not be saved'**
   String get noteEditorSaveError;
+
+  /// No description provided for @noteEditorDictate.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictate'**
+  String get noteEditorDictate;
+
+  /// No description provided for @noteEditorDictateStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop dictating'**
+  String get noteEditorDictateStop;
+
+  /// No description provided for @noteEditorDictateListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening…'**
+  String get noteEditorDictateListening;
+
+  /// No description provided for @noteEditorDictateUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone cannot write down what you say'**
+  String get noteEditorDictateUnavailable;
+
+  /// No description provided for @noteEditorLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection'**
+  String get noteEditorLock;
+
+  /// No description provided for @noteEditorLockOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted. Your fingerprint or screen lock opens it.'**
+  String get noteEditorLockOn;
+
+  /// No description provided for @noteEditorLockOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with the phone can read it'**
+  String get noteEditorLockOff;
+
+  /// No description provided for @noteEditorLockRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn protection off'**
+  String get noteEditorLockRemove;
+
+  /// No description provided for @noteLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Protected'**
+  String get noteLocked;
+
+  /// No description provided for @noteEditorScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Text from a photo'**
+  String get noteEditorScanTitle;
+
+  /// No description provided for @noteEditorScanCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get noteEditorScanCamera;
+
+  /// No description provided for @noteEditorScanGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from gallery'**
+  String get noteEditorScanGallery;
+
+  /// No description provided for @noteEditorScanEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No text was found in that photo'**
+  String get noteEditorScanEmpty;
+
+  /// No description provided for @noteEditorScanError.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo could not be read'**
+  String get noteEditorScanError;
 
   /// No description provided for @noteFormatBold.
   ///
@@ -274,6 +643,66 @@ abstract class Translations {
   /// In en, this message translates to:
   /// **'Remove from favorites'**
   String get noteDetailsFavoriteRemove;
+
+  /// No description provided for @noteDetailsDatesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates in this note'**
+  String get noteDetailsDatesFound;
+
+  /// No description provided for @noteDetailsDateAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to the calendar'**
+  String get noteDetailsDateAdded;
+
+  /// No description provided for @noteDetailsDateAlreadyAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in the calendar'**
+  String get noteDetailsDateAlreadyAdded;
+
+  /// No description provided for @noteQrShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with a QR code'**
+  String get noteQrShare;
+
+  /// No description provided for @noteQrImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Add from a QR code'**
+  String get noteQrImport;
+
+  /// No description provided for @noteQrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this code in the other phone\'s note editor.'**
+  String get noteQrHint;
+
+  /// No description provided for @noteQrTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'This note is too long to fit in a QR code.'**
+  String get noteQrTooLong;
+
+  /// No description provided for @noteQrUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'That code does not hold a note'**
+  String get noteQrUnreadable;
+
+  /// No description provided for @noteQrError.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo could not be read'**
+  String get noteQrError;
+
+  /// No description provided for @noteQrShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The code could not be shared'**
+  String get noteQrShareFailed;
 
   /// No description provided for @noteDetailsMissing.
   ///
@@ -443,6 +872,54 @@ abstract class Translations {
   /// **'Continue without an account'**
   String get loginContinueAsGuest;
 
+  /// No description provided for @categoriesAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get categoriesAdd;
+
+  /// No description provided for @categoriesRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename category'**
+  String get categoriesRename;
+
+  /// No description provided for @categoriesNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get categoriesNameHint;
+
+  /// No description provided for @categoriesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet. Add one here, or type a new name while writing a note.'**
+  String get categoriesEmpty;
+
+  /// No description provided for @categoriesDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'A category with that name already exists'**
+  String get categoriesDuplicate;
+
+  /// No description provided for @categoriesDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category?'**
+  String get categoriesDeleteTitle;
+
+  /// No description provided for @categoriesDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The notes stay, they just lose this category.'**
+  String get categoriesDeleteMessage;
+
+  /// No description provided for @categoriesNoteCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No notes} =1{1 note} other{{count} notes}}'**
+  String categoriesNoteCount(int count);
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:
@@ -497,23 +974,89 @@ abstract class Translations {
   /// **'Manage your note categories'**
   String get settingsCategoriesDescription;
 
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
   /// No description provided for @settingsReminders.
   ///
   /// In en, this message translates to:
   /// **'Reminders'**
   String get settingsReminders;
 
-  /// No description provided for @settingsRemindersDescription.
+  /// No description provided for @settingsRemindersOn.
   ///
   /// In en, this message translates to:
-  /// **'Notifications for your notes'**
-  String get settingsRemindersDescription;
+  /// **'Reminders for your events can arrive'**
+  String get settingsRemindersOn;
+
+  /// No description provided for @settingsRemindersOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off, reminders will not arrive'**
+  String get settingsRemindersOff;
+
+  /// No description provided for @settingsRemindersDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn notifications for Scanote back on in your phone\'s settings'**
+  String get settingsRemindersDenied;
 
   /// No description provided for @settingsAccount.
   ///
   /// In en, this message translates to:
   /// **'Account'**
   String get settingsAccount;
+
+  /// No description provided for @settingsManageAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage account'**
+  String get settingsManageAccount;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountTitle;
+
+  /// No description provided for @accountSignOutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends the session on this phone'**
+  String get accountSignOutDescription;
+
+  /// No description provided for @accountDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get accountDisconnect;
+
+  /// No description provided for @accountDisconnectDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Takes back the access granted to Scanote'**
+  String get accountDisconnectDescription;
+
+  /// No description provided for @accountDisconnectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect this account?'**
+  String get accountDisconnectTitle;
+
+  /// No description provided for @accountDisconnectMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanote loses access to your Google profile. Your notes stay on this phone.'**
+  String get accountDisconnectMessage;
 
   /// No description provided for @settingsSignOut.
   ///
@@ -538,6 +1081,72 @@ abstract class Translations {
   /// In en, this message translates to:
   /// **'App version'**
   String get settingsAppVersion;
+
+  /// No description provided for @settingsBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get settingsBackup;
+
+  /// No description provided for @settingsBackupExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export to Google Drive'**
+  String get settingsBackupExport;
+
+  /// No description provided for @settingsBackupExportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Saves all your notes as a file on your Drive'**
+  String get settingsBackupExportDescription;
+
+  /// No description provided for @settingsBackupImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from Google Drive'**
+  String get settingsBackupImport;
+
+  /// No description provided for @settingsBackupImportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds the notes from the newest backup'**
+  String get settingsBackupImportDescription;
+
+  /// No description provided for @backupExportDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{There was nothing to save} =1{1 note saved to Google Drive} other{{count} notes saved to Google Drive}}'**
+  String backupExportDone(int count);
+
+  /// No description provided for @backupImportDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Everything from the backup is already here} =1{1 note added from the backup} other{{count} notes added from the backup}}'**
+  String backupImportDone(int count);
+
+  /// No description provided for @backupNothingFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup was found on your Drive'**
+  String get backupNothingFound;
+
+  /// No description provided for @backupError.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive could not be reached'**
+  String get backupError;
+
+  /// No description provided for @checklistCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'All done!'**
+  String get checklistCompleted;
+
+  /// No description provided for @homeChecklistCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Checklist finished'**
+  String get homeChecklistCompleted;
 }
 
 class _TranslationsDelegate extends LocalizationsDelegate<Translations> {
@@ -549,25 +1158,26 @@ class _TranslationsDelegate extends LocalizationsDelegate<Translations> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'pl'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'pl'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_TranslationsDelegate old) => false;
 }
 
 Translations lookupTranslations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return TranslationsEn();
-    case 'pl': return TranslationsPl();
+    case 'en':
+      return TranslationsEn();
+    case 'pl':
+      return TranslationsPl();
   }
 
   throw FlutterError(
     'Translations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

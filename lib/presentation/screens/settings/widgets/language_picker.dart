@@ -6,10 +6,10 @@ import 'package:note/presentation/components/locale/app_language.dart';
 import 'package:note/presentation/components/locale/bloc/locale_bloc.dart';
 
 String languageLabel(BuildContext context, AppLanguage language) => switch (language) {
-      AppLanguage.system => context.translations.settingsLanguageSystem,
-      AppLanguage.english => 'English',
-      AppLanguage.polish => 'Polski',
-    };
+  AppLanguage.system => context.translations.settingsLanguageSystem,
+  AppLanguage.english => 'English',
+  AppLanguage.polish => 'Polski',
+};
 
 Future<void> showLanguagePicker(BuildContext context) async {
   final localeBloc = context.read<LocaleBloc>();
@@ -23,17 +23,24 @@ Future<void> showLanguagePicker(BuildContext context) async {
         style: dialogContext.textTheme.titleMedium!.copyWith(color: dialogContext.palette.textOnPrimaryColor),
       ),
       children: [
-        for (final language in AppLanguage.values)
-          RadioListTile<AppLanguage>(
-            value: language,
-            groupValue: localeBloc.state.language,
-            onChanged: (value) => Navigator.of(dialogContext).pop(value),
-            activeColor: dialogContext.palette.accentColor,
-            title: Text(
-              languageLabel(dialogContext, language),
-              style: dialogContext.textTheme.bodyLarge!.copyWith(color: dialogContext.palette.textOnPrimaryColor),
-            ),
+        RadioGroup<AppLanguage>(
+          groupValue: localeBloc.state.language,
+          onChanged: (value) => Navigator.of(dialogContext).pop(value),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final language in AppLanguage.values)
+                RadioListTile<AppLanguage>(
+                  value: language,
+                  activeColor: dialogContext.palette.accentColor,
+                  title: Text(
+                    languageLabel(dialogContext, language),
+                    style: dialogContext.textTheme.bodyLarge!.copyWith(color: dialogContext.palette.textOnPrimaryColor),
+                  ),
+                ),
+            ],
           ),
+        ),
       ],
     ),
   );

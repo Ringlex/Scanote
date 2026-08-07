@@ -1,7 +1,7 @@
 {
     "@@locale": "en",
 
-    "appTitle": "Note",
+    "appTitle": "Scanote",
     "@appTitle": {
         "description": "App name"
     },
@@ -12,9 +12,78 @@
 
     "commonSave": "Save",
     "commonCancel": "Cancel",
+    "commonClose": "Close",
     "commonDelete": "Delete",
+    "commonShare": "Share",
+    "commonUndo": "Undo",
+
+    "backupPassphraseTitle": "Backup passphrase",
+    "backupPassphraseExportHint": "Your protected notes are sealed with this before they go to Drive. Without it they cannot be read back on another phone \u2014 not even by you.",
+    "backupPassphraseImportHint": "This backup holds protected notes. Give the passphrase they were sealed with.",
+    "backupPassphraseHint": "Passphrase",
+    "backupPassphraseRepeatHint": "Repeat the passphrase",
+    "backupPassphraseTooShort": "At least {count} characters",
+    "@backupPassphraseTooShort": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "backupPassphraseMismatch": "The two passphrases are different",
+    "backupWrongPassphrase": "That passphrase does not open this backup",
+
+    "homeWriteNote": "Write a note",
+
+    "noteProtectTextOnly": "Only text notes can be protected, not checklists.",
+    "noteProtectPromptTitle": "Protected note",
+    "noteProtectPromptSubtitle": "Prove it is you to seal this note",
+    "noteProtectOpenSubtitle": "Prove it is you to open this note",
+    "noteProtectUnavailable": "Set up a fingerprint or a screen lock first, so there is something to guard the note with.",
+    "noteProtectCancelled": "The note stays as it was",
+    "noteProtectKeyLost": "The key to this note is gone from this phone and cannot be brought back. The note cannot be read again.",
+    "noteProtectUnreadable": "This note is marked as protected but its contents were never encrypted. Open it in the editor, turn protection off, and set it again.",
+    "noteProtectFailed": "The note could not be opened",
+    "noteProtectPinDropped": "{count, plural, one{1 note lost its PIN in this update. Protect it again to have it encrypted properly.} other{{count} notes lost their PIN in this update. Protect them again to have them encrypted properly.}}",
+    "@noteProtectPinDropped": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+
+    "scanPagesTaken": "{count, plural, one{1 page scanned} other{{count} pages scanned}}",
+    "@scanPagesTaken": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "scanAddPage": "Scan another page",
+    "scanFinish": "That is the whole thing",
+
+    "widgetRecentTitle": "Recent notes",
+    "widgetEmpty": "No notes yet.",
+
+    "noteMovedToBin": "Note moved to the bin",
+    "binTitle": "Bin",
+    "binEmpty": "The bin is empty.",
+    "binRetentionHint": "Notes here are deleted for good 30 days after they were thrown away.",
+    "binPurgesIn": "{count, plural, =0{Goes today} one{Goes in 1 day} other{Goes in {count} days}}",
+    "@binPurgesIn": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "binRestore": "Restore",
+    "binNoteRestored": "Note restored",
+    "binDeleteForever": "Delete for good",
+    "binEmptyAction": "Empty the bin",
+    "binDeleteForeverTitle": "Delete for good?",
+    "binDeleteForeverMessage": "\"{title}\" cannot be brought back.",
+    "@binDeleteForeverMessage": {
+        "placeholders": { "title": { "type": "String" } }
+    },
+    "binEmptyTitle": "Empty the bin?",
+    "binEmptyMessage": "All {count} notes in the bin will be deleted for good.",
+    "@binEmptyMessage": {
+        "placeholders": { "count": { "type": "int" } }
+    },
 
     "homeEmpty": "No notes yet. Tap + to write the first one.",
+    "homeSearchHint": "Search notes",
+    "homeSearchEmpty": "Nothing matches \"{query}\"",
+    "@homeSearchEmpty": {
+        "placeholders": { "query": { "type": "String" } }
+    },
     "homeLoadError": "Your notes could not be loaded.",
     "homeChecklistProgress": "{done}/{total} done",
     "@homeChecklistProgress": {
@@ -36,7 +105,30 @@
     "noteEditorItemHint": "List item",
     "noteEditorAddItem": "Add item",
     "noteEditorRemoveItem": "Remove item",
+    "noteEditorDate": "Date in the calendar",
+    "noteEditorDateNone": "Not set",
+    "noteEditorDateClear": "Clear the date",
+    "noteDeleteTitle": "Delete note?",
+    "noteDeleteMessage": "\"{title}\" will be removed for good.",
+    "@noteDeleteMessage": {
+        "placeholders": { "title": { "type": "String" } }
+    },
     "noteEditorSaveError": "The note could not be saved",
+
+    "noteEditorDictate": "Dictate",
+    "noteEditorDictateStop": "Stop dictating",
+    "noteEditorDictateListening": "Listening…",
+    "noteEditorDictateUnavailable": "This phone cannot write down what you say",
+    "noteEditorLock": "Protection",
+    "noteEditorLockOn": "Encrypted. Your fingerprint or screen lock opens it.",
+    "noteEditorLockOff": "Anyone with the phone can read it",
+    "noteEditorLockRemove": "Turn protection off",
+    "noteLocked": "Protected",
+    "noteEditorScanTitle": "Text from a photo",
+    "noteEditorScanCamera": "Take a photo",
+    "noteEditorScanGallery": "Pick from gallery",
+    "noteEditorScanEmpty": "No text was found in that photo",
+    "noteEditorScanError": "The photo could not be read",
 
     "noteFormatBold": "Bold",
     "noteFormatItalic": "Italic",
@@ -49,6 +141,16 @@
     "noteDetailsEdit": "Edit note",
     "noteDetailsFavoriteAdd": "Add to favorites",
     "noteDetailsFavoriteRemove": "Remove from favorites",
+    "noteDetailsDatesFound": "Dates in this note",
+    "noteDetailsDateAdded": "Added to the calendar",
+    "noteDetailsDateAlreadyAdded": "Already in the calendar",
+    "noteQrShare": "Share with a QR code",
+    "noteQrImport": "Add from a QR code",
+    "noteQrHint": "Scan this code in the other phone's note editor.",
+    "noteQrTooLong": "This note is too long to fit in a QR code.",
+    "noteQrUnreadable": "That code does not hold a note",
+    "noteQrError": "The photo could not be read",
+    "noteQrShareFailed": "The code could not be shared",
     "noteDetailsMissing": "This note is no longer available.",
     "noteDetailsEmptyChecklist": "This checklist has no items yet.",
 
@@ -83,6 +185,17 @@
     "loginError": "Signing in failed. Please try again.",
     "loginContinueAsGuest": "Continue without an account",
 
+    "categoriesAdd": "New category",
+    "categoriesRename": "Rename category",
+    "categoriesNameHint": "Category name",
+    "categoriesEmpty": "No categories yet. Add one here, or type a new name while writing a note.",
+    "categoriesDuplicate": "A category with that name already exists",
+    "categoriesDeleteTitle": "Delete category?",
+    "categoriesDeleteMessage": "The notes stay, they just lose this category.",
+    "categoriesNoteCount": "{count, plural, =0{No notes} =1{1 note} other{{count} notes}}",
+    "@categoriesNoteCount": {
+        "placeholders": { "count": { "type": "int" } }
+    },
     "settingsTitle": "Settings",
     "settingsAppearance": "Appearance",
     "settingsTheme": "Theme",
@@ -92,11 +205,41 @@
     "settingsNotes": "Notes",
     "settingsCategories": "Categories",
     "settingsCategoriesDescription": "Manage your note categories",
+    "settingsThemeLight": "Light",
+    "settingsThemeDark": "Dark",
     "settingsReminders": "Reminders",
-    "settingsRemindersDescription": "Notifications for your notes",
+    "settingsRemindersOn": "Reminders for your events can arrive",
+    "settingsRemindersOff": "Notifications are off, reminders will not arrive",
+    "settingsRemindersDenied": "Turn notifications for Scanote back on in your phone's settings",
     "settingsAccount": "Account",
+    "settingsManageAccount": "Manage account",
+    "accountTitle": "Account",
+    "accountSignOutDescription": "Ends the session on this phone",
+    "accountDisconnect": "Disconnect",
+    "accountDisconnectDescription": "Takes back the access granted to Scanote",
+    "accountDisconnectTitle": "Disconnect this account?",
+    "accountDisconnectMessage": "Scanote loses access to your Google profile. Your notes stay on this phone.",
     "settingsSignOut": "Sign out",
     "settingsGuest": "No account",
     "settingsAbout": "About",
-    "settingsAppVersion": "App version"
+    "settingsAppVersion": "App version",
+
+    "settingsBackup": "Backup",
+    "settingsBackupExport": "Export to Google Drive",
+    "settingsBackupExportDescription": "Saves all your notes as a file on your Drive",
+    "settingsBackupImport": "Import from Google Drive",
+    "settingsBackupImportDescription": "Adds the notes from the newest backup",
+    "backupExportDone": "{count, plural, =0{There was nothing to save} =1{1 note saved to Google Drive} other{{count} notes saved to Google Drive}}",
+    "@backupExportDone": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "backupImportDone": "{count, plural, =0{Everything from the backup is already here} =1{1 note added from the backup} other{{count} notes added from the backup}}",
+    "@backupImportDone": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "backupNothingFound": "No backup was found on your Drive",
+    "backupError": "Google Drive could not be reached",
+
+    "checklistCompleted": "All done!",
+    "homeChecklistCompleted": "Checklist finished"
 }

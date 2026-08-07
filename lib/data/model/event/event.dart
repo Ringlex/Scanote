@@ -4,7 +4,7 @@ part 'event.freezed.dart';
 part 'event.g.dart';
 
 @freezed
-class Event with _$Event {
+abstract class Event with _$Event {
   factory Event({
     int? id,
     required String title,

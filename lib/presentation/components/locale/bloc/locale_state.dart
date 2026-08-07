@@ -1,7 +1,7 @@
 part of 'locale_bloc.dart';
 
 @freezed
-class LocaleState with _$LocaleState {
+abstract class LocaleState with _$LocaleState {
   const factory LocaleState({
     required AppLanguage language,
   }) = _LocaleState;

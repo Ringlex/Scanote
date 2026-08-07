@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:note/core/l10n/translations_extension.dart';
 import 'package:note/core/theme/theme.dart';
 import 'package:note/data/model/note/checklist_item.dart';
+import 'package:note/presentation/common/app_celebration.dart';
 import 'package:note/presentation/common/dimen.dart';
 
 class NoteChecklistEditor extends StatefulWidget {
-  const NoteChecklistEditor({
-    required this.initialItems,
-    required this.onChanged,
-    super.key,
-  });
+  const NoteChecklistEditor({required this.initialItems, required this.onChanged, super.key});
 
   final List<ChecklistItem> initialItems;
   final ValueChanged<List<ChecklistItem>> onChanged;
@@ -46,6 +43,8 @@ class _NoteChecklistEditorState extends State<NoteChecklistEditor> {
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: _entries.length + 1,
       itemBuilder: (context, index) => index == _entries.length
           ? _AddItemButton(onPressed: _onItemAdded)
@@ -76,8 +75,20 @@ class _NoteChecklistEditorState extends State<NoteChecklistEditor> {
   }
 
   void _onDoneChanged(int index, bool isDone) {
+    final wasCompleted = _isCompleted;
+
     setState(() => _entries[index].isDone = isDone);
     _notifyChanged();
+
+    if (!wasCompleted && _isCompleted) {
+      showChecklistCelebration(context, message: context.translations.checklistCompleted);
+    }
+  }
+
+  bool get _isCompleted {
+    final written = _entries.where((entry) => entry.controller.text.trim().isNotEmpty);
+
+    return written.isNotEmpty && written.every((entry) => entry.isDone);
   }
 
   void _notifyChanged() {
@@ -154,11 +165,7 @@ class _ChecklistRow extends StatelessWidget {
         IconButton(
           onPressed: onRemoved,
           tooltip: context.translations.noteEditorRemoveItem,
-          icon: Icon(
-            Icons.close,
-            size: _iconSize,
-            color: context.palette.inactiveColor,
-          ),
+          icon: Icon(Icons.close, size: _iconSize, color: context.palette.inactiveColor),
         ),
       ],
     );

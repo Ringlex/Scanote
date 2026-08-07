@@ -93,7 +93,7 @@ class MultiValueStore<T extends Storable> {
     return true;
   }
 
-  /// Attempts to retrieve the entire collection of values from the store as a List<T>.
+  /// Attempts to retrieve the entire collection of values from the store as a `List<T>`.
   ///
   /// Returns an empty list when there is no stored data, currently stored data is corrupted or currently
   /// stored data no longer adheres to a structurally modified T.

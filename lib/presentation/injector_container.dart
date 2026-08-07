@@ -51,6 +51,8 @@ Future<void> init({
     ..registerFactoryParam<SettingsBloc, SettingsArgument, void>(
       (argument, _) => SettingsBloc(
         argument: argument,
+        backupRepository: injector(),
+        notificationService: injector(),
       ),
     );
 }

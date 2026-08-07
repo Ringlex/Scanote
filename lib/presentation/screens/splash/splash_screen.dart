@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:note/core/constants/app_const.dart';
 import 'package:note/core/theme/theme.dart';
-import 'package:note/presentation/common/app_assets.dart';
 import 'package:note/presentation/common/dimen.dart';
+import 'package:note/presentation/common/widgets/app_wordmark.dart';
 
 class SplashScreen extends HookWidget {
   static const String routeName = '/';
 
   const SplashScreen({super.key});
 
-  static const _logoSize = Size(220, 110);
+  static const _wordmarkSize = 52.0;
   static const _indicatorSize = 24.0;
   static const _indicatorWidth = 2.0;
   static const _scaleFrom = 0.92;
@@ -40,7 +40,7 @@ class SplashScreen extends HookWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                context.svgImage(AppAssets.logoText, size: _logoSize),
+                const AppWordmark(fontSize: _wordmarkSize),
                 Gap.xxxLarge,
                 SizedBox(
                   width: _indicatorSize,

@@ -197,6 +197,7 @@ class _EventEditorScreenState extends State<EventEditorScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: context.palette.errorColor),
             child: Text(context.translations.commonDelete),
           ),
         ],

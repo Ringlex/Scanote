@@ -11,7 +11,7 @@ Widget settingsRoute(GoRouterState state) => MultiBlocProvider(
         BlocProvider<SettingsBloc>(
           create: (context) => injector<SettingsBloc>(
             param1: state.extra ?? const SettingsArgument(),
-          ),
+          )..add(const SettingsEvent.onInitiated()),
         ),
       ],
       child: const SettingsScreen(),

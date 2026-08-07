@@ -45,7 +45,7 @@ class SingleValueStore<T extends Storable> {
           await _adapter.write(key: _key, value: jsonEncode(value.toJson()));
           return right(unit);
         },
-        (_, __) => SingleValueStoreFailure.fatal,
+        (_, _) => SingleValueStoreFailure.fatal,
       );
 
   /// Attempts to read the currently stored value as an instance of T.
@@ -69,7 +69,7 @@ class SingleValueStore<T extends Storable> {
             await delete().run();
           }
         },
-        (_, __) => SingleValueStoreFailure.fatal,
+        (_, _) => SingleValueStoreFailure.fatal,
       );
 
   /// Deletes the currently stored value from the store.
@@ -79,6 +79,6 @@ class SingleValueStore<T extends Storable> {
           await _adapter.delete(key: _key);
           return right(unit);
         },
-        (_, __) => SingleValueStoreFailure.fatal,
+        (_, _) => SingleValueStoreFailure.fatal,
       );
 }

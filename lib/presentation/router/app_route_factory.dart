@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:note/presentation/common/app_page_transitions.dart';
+import 'package:note/presentation/screens/account/account_route.dart';
+import 'package:note/presentation/screens/account/account_screen.dart';
+import 'package:note/presentation/screens/bin/bin_argument.dart';
+import 'package:note/presentation/screens/bin/bin_route.dart';
+import 'package:note/presentation/screens/bin/bin_screen.dart';
 import 'package:note/presentation/screens/calendar/calendar_route.dart';
 import 'package:note/presentation/screens/calendar/calendar_screen.dart';
+import 'package:note/presentation/screens/categories/categories_argument.dart';
+import 'package:note/presentation/screens/categories/categories_route.dart';
+import 'package:note/presentation/screens/categories/categories_screen.dart';
 import 'package:note/presentation/screens/dashboard/dashboard_route.dart';
 import 'package:note/presentation/screens/favorites/favorites_route.dart';
 import 'package:note/presentation/screens/favorites/favorites_screen.dart';
@@ -82,6 +90,33 @@ class AppRouteFactory {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            path: AccountScreen.routeName,
+            parentNavigatorKey: rootNavigatorKey,
+            pageBuilder: (_, state) => fadeSlidePage(
+              key: state.pageKey,
+              child: accountRoute(state),
+            ),
+          ),
+          GoRoute(
+            path: CategoriesScreen.routeName,
+            parentNavigatorKey: rootNavigatorKey,
+            redirect: (_, state) =>
+                state.extra is CategoriesArgument ? null : HomeScreen.routeName,
+            pageBuilder: (_, state) => fadeSlidePage(
+              key: state.pageKey,
+              child: categoriesRoute(state),
+            ),
+          ),
+          GoRoute(
+            path: BinScreen.routeName,
+            parentNavigatorKey: rootNavigatorKey,
+            redirect: (_, state) => state.extra is BinArgument ? null : HomeScreen.routeName,
+            pageBuilder: (_, state) => fadeSlidePage(
+              key: state.pageKey,
+              child: binRoute(state),
+            ),
           ),
           GoRoute(
             path: NoteDetailsScreen.routeName,

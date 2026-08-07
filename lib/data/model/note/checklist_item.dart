@@ -6,7 +6,7 @@ part 'checklist_item.freezed.dart';
 part 'checklist_item.g.dart';
 
 @freezed
-class ChecklistItem with _$ChecklistItem {
+abstract class ChecklistItem with _$ChecklistItem {
   const factory ChecklistItem({
     required String label,
     @Default(false) bool isDone,

@@ -1,7 +1,7 @@
 part of 'auth_bloc.dart';
 
 @freezed
-class AuthEvent with _$AuthEvent {
+sealed class AuthEvent with _$AuthEvent {
   const factory AuthEvent.onInitiated() = _OnInitiated;
 
   const factory AuthEvent.onSignInRequested() = _OnSignInRequested;
@@ -9,4 +9,6 @@ class AuthEvent with _$AuthEvent {
   const factory AuthEvent.onGuestRequested() = _OnGuestRequested;
 
   const factory AuthEvent.onSignOutRequested() = _OnSignOutRequested;
+
+  const factory AuthEvent.onDisconnectRequested() = _OnDisconnectRequested;
 }

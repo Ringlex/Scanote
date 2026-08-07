@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RemoteViews only understands a small set of widgets, which is why the
+     notes are three fixed rows rather than a list: a real list would need a
+     RemoteViewsService of its own. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/widget_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/widget_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textColor="@color/widget_accent"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:paddingStart="12dp"
+            android:paddingEnd="4dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/widget_text_muted"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/widget_note_0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/widget_text"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/widget_note_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/widget_text"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/widget_note_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/widget_text"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="gone"/>
+</LinearLayout>

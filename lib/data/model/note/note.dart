@@ -6,22 +6,40 @@ part 'note.freezed.dart';
 part 'note.g.dart';
 
 @freezed
-class Note with _$Note {
+abstract class Note with _$Note {
   factory Note({
     int? id,
     required String title,
     String? todoList,
     String? noteContents,
-    String? password,
+
+    @BoolIntConverter() @Default(false) bool isProtected,
     int? categoryId,
     @BoolIntConverter() @Default(false) bool isFavorite,
+    DateTime? date,
+    DateTime? deletedAt,
   }) = _Note;
 
   Note._();
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 
+  bool get isDeleted => deletedAt != null;
+
   bool get isChecklist => todoList != null;
 
+  bool get isLocked => isProtected;
+
   List<ChecklistItem> get checklistItems => Checklist.decode(todoList);
+
+  int get checklistDoneCount => checklistItems.where((item) => item.isDone).length;
+
+  bool get isChecklistCompleted {
+    final items = checklistItems;
+
+    return items.isNotEmpty && items.every((item) => item.isDone);
+  }
+
+  String get searchableText =>
+      [title, if (!isProtected) noteContents ?? '', for (final item in checklistItems) item.label].join('\n');
 }

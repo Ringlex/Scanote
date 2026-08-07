@@ -22,20 +22,32 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// Kept out of the repository: it holds the keystore password. Without it the
+// release build falls back to the debug key, so a checkout still builds.
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader('UTF-8') { reader ->
+        keystoreProperties.load(reader)
+    }
+}
+
 android {
-    namespace "com.example.note"
-    compileSdkVersion flutter.compileSdkVersion
+    namespace "io.robert.note"
+    // Pinned rather than tracking flutter.compileSdkVersion, so that upgrading
+    // the SDK cannot change what the app targets without it being a decision.
+    compileSdk 36
     ndkVersion flutter.ndkVersion
 
     compileOptions {
         // Required by flutter_local_notifications, which uses java.time APIs.
         coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     sourceSets {
@@ -43,22 +55,35 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.note"
+        applicationId "io.robert.note"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig keystorePropertiesFile.exists()
+                    ? signingConfigs.release
+                    : signingConfigs.debug
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -68,5 +93,8 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
+    // flutter_local_notifications 22 requires at least 2.1.4.
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.5"
+    // BiometricPrompt, used to unlock the Keystore key guarding a note.
+    implementation "androidx.biometric:biometric:1.1.0"
 }

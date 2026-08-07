@@ -1,14 +1,83 @@
 {
     "@@locale": "pl",
 
-    "appTitle": "Note",
+    "appTitle": "Scanote",
     "splash": "Ekran startowy",
 
     "commonSave": "Zapisz",
     "commonCancel": "Anuluj",
+    "commonClose": "Zamknij",
     "commonDelete": "Usuń",
+    "commonShare": "Udostępnij",
+    "commonUndo": "Cofnij",
+
+    "backupPassphraseTitle": "Has\u0142o kopii zapasowej",
+    "backupPassphraseExportHint": "Tym has\u0142em zostan\u0105 zaszyfrowane chronione notatki przed wys\u0142aniem na Drive. Bez niego nie odczytasz ich na innym telefonie \u2014 nikt ich nie odczyta.",
+    "backupPassphraseImportHint": "Ta kopia zawiera chronione notatki. Podaj has\u0142o, kt\u00f3rym zosta\u0142y zaszyfrowane.",
+    "backupPassphraseHint": "Has\u0142o",
+    "backupPassphraseRepeatHint": "Powt\u00f3rz has\u0142o",
+    "backupPassphraseTooShort": "Co najmniej {count} znak\u00f3w",
+    "@backupPassphraseTooShort": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "backupPassphraseMismatch": "Podane has\u0142a si\u0119 r\u00f3\u017cni\u0105",
+    "backupWrongPassphrase": "To has\u0142o nie otwiera tej kopii",
+
+    "homeWriteNote": "Napisz notatkę",
+
+    "noteProtectTextOnly": "Chronić można tylko notatki tekstowe, nie listy zadań.",
+    "noteProtectPromptTitle": "Chroniona notatka",
+    "noteProtectPromptSubtitle": "Potwierdź tożsamość, aby zabezpieczyć tę notatkę",
+    "noteProtectOpenSubtitle": "Potwierdź tożsamość, aby otworzyć tę notatkę",
+    "noteProtectUnavailable": "Najpierw ustaw odcisk palca albo blokadę ekranu — bez tego nie ma czym chronić notatki.",
+    "noteProtectCancelled": "Notatka pozostaje bez zmian",
+    "noteProtectKeyLost": "Klucz do tej notatki zniknął z tego telefonu i nie da się go odzyskać. Notatki nie można już odczytać.",
+    "noteProtectUnreadable": "Ta notatka jest oznaczona jako chroniona, ale jej treść nigdy nie została zaszyfrowana. Otwórz ją w edytorze, wyłącz ochronę i ustaw ją ponownie.",
+    "noteProtectFailed": "Nie udało się otworzyć notatki",
+    "noteProtectPinDropped": "{count, plural, one{1 notatka straciła PIN w tej aktualizacji. Zabezpiecz ją ponownie, aby została naprawdę zaszyfrowana.} few{{count} notatki straciły PIN w tej aktualizacji. Zabezpiecz je ponownie, aby zostały naprawdę zaszyfrowane.} many{{count} notatek straciło PIN w tej aktualizacji. Zabezpiecz je ponownie, aby zostały naprawdę zaszyfrowane.} other{{count} notatki straciły PIN w tej aktualizacji. Zabezpiecz je ponownie, aby zostały naprawdę zaszyfrowane.}}",
+    "@noteProtectPinDropped": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+
+    "scanPagesTaken": "{count, plural, one{Zeskanowano 1 stronę} few{Zeskanowano {count} strony} many{Zeskanowano {count} stron} other{Zeskanowano {count} strony}}",
+    "@scanPagesTaken": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "scanAddPage": "Zeskanuj kolejną stronę",
+    "scanFinish": "To już całość",
+
+    "widgetRecentTitle": "Ostatnie notatki",
+    "widgetEmpty": "Brak notatek.",
+
+    "noteMovedToBin": "Notatka przeniesiona do kosza",
+    "binTitle": "Kosz",
+    "binEmpty": "Kosz jest pusty.",
+    "binRetentionHint": "Notatki są tu trwale usuwane 30 dni po wyrzuceniu.",
+    "binPurgesIn": "{count, plural, =0{Znika dziś} one{Znika za 1 dzień} few{Znika za {count} dni} many{Znika za {count} dni} other{Znika za {count} dni}}",
+    "@binPurgesIn": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "binRestore": "Przywróć",
+    "binNoteRestored": "Notatka przywrócona",
+    "binDeleteForever": "Usuń trwale",
+    "binEmptyAction": "Opróżnij kosz",
+    "binDeleteForeverTitle": "Usunąć trwale?",
+    "binDeleteForeverMessage": "„{title}” nie będzie można przywrócić.",
+    "@binDeleteForeverMessage": {
+        "placeholders": { "title": { "type": "String" } }
+    },
+    "binEmptyTitle": "Opróżnić kosz?",
+    "binEmptyMessage": "Wszystkie notatki w koszu ({count}) zostaną trwale usunięte.",
+    "@binEmptyMessage": {
+        "placeholders": { "count": { "type": "int" } }
+    },
 
     "homeEmpty": "Nie masz jeszcze notatek. Dotknij +, aby napisać pierwszą.",
+    "homeSearchHint": "Szukaj w notatkach",
+    "homeSearchEmpty": "Nic nie pasuje do „{query}”",
+    "@homeSearchEmpty": {
+        "placeholders": { "query": { "type": "String" } }
+    },
     "homeLoadError": "Nie udało się wczytać notatek.",
     "homeChecklistProgress": "{done}/{total} zrobione",
     "@homeChecklistProgress": {
@@ -29,7 +98,30 @@
     "noteEditorItemHint": "Pozycja listy",
     "noteEditorAddItem": "Dodaj pozycję",
     "noteEditorRemoveItem": "Usuń pozycję",
+    "noteEditorDate": "Data w kalendarzu",
+    "noteEditorDateNone": "Nie ustawiono",
+    "noteEditorDateClear": "Wyczyść datę",
+    "noteDeleteTitle": "Usunąć notatkę?",
+    "noteDeleteMessage": "„{title}” zostanie trwale usunięta.",
+    "@noteDeleteMessage": {
+        "placeholders": { "title": { "type": "String" } }
+    },
     "noteEditorSaveError": "Nie udało się zapisać notatki",
+
+    "noteEditorDictate": "Dyktuj",
+    "noteEditorDictateStop": "Zakończ dyktowanie",
+    "noteEditorDictateListening": "Słucham…",
+    "noteEditorDictateUnavailable": "Ten telefon nie zapisze tego, co mówisz",
+    "noteEditorLock": "Ochrona notatki",
+    "noteEditorLockOn": "Zaszyfrowana. Otworzysz ją odciskiem palca lub blokadą ekranu.",
+    "noteEditorLockOff": "Notatkę przeczyta każdy, kto ma telefon",
+    "noteEditorLockRemove": "Wyłącz ochronę",
+    "noteLocked": "Chroniona",
+    "noteEditorScanTitle": "Tekst ze zdjęcia",
+    "noteEditorScanCamera": "Zrób zdjęcie",
+    "noteEditorScanGallery": "Wybierz z galerii",
+    "noteEditorScanEmpty": "Nie znaleziono tekstu na tym zdjęciu",
+    "noteEditorScanError": "Nie udało się odczytać zdjęcia",
 
     "noteFormatBold": "Pogrubienie",
     "noteFormatItalic": "Kursywa",
@@ -42,6 +134,16 @@
     "noteDetailsEdit": "Edytuj notatkę",
     "noteDetailsFavoriteAdd": "Dodaj do ulubionych",
     "noteDetailsFavoriteRemove": "Usuń z ulubionych",
+    "noteDetailsDatesFound": "Daty w tej notatce",
+    "noteDetailsDateAdded": "Dodano do kalendarza",
+    "noteDetailsDateAlreadyAdded": "Już jest w kalendarzu",
+    "noteQrShare": "Udostępnij kodem QR",
+    "noteQrImport": "Dodaj z kodu QR",
+    "noteQrHint": "Zeskanuj ten kod w edytorze notatki na drugim telefonie.",
+    "noteQrTooLong": "Ta notatka jest za długa, żeby zmieścić ją w kodzie QR.",
+    "noteQrUnreadable": "Ten kod nie zawiera notatki",
+    "noteQrError": "Nie udało się odczytać zdjęcia",
+    "noteQrShareFailed": "Nie udało się udostępnić kodu",
     "noteDetailsMissing": "Ta notatka nie jest już dostępna.",
     "noteDetailsEmptyChecklist": "Ta lista nie ma jeszcze żadnych pozycji.",
 
@@ -76,6 +178,17 @@
     "loginError": "Logowanie się nie powiodło. Spróbuj ponownie.",
     "loginContinueAsGuest": "Kontynuuj bez konta",
 
+    "categoriesAdd": "Nowa kategoria",
+    "categoriesRename": "Zmień nazwę kategorii",
+    "categoriesNameHint": "Nazwa kategorii",
+    "categoriesEmpty": "Nie masz jeszcze kategorii. Dodaj ją tutaj albo wpisz nową nazwę przy notatce.",
+    "categoriesDuplicate": "Kategoria o tej nazwie już istnieje",
+    "categoriesDeleteTitle": "Usunąć kategorię?",
+    "categoriesDeleteMessage": "Notatki zostaną, stracą tylko tę kategorię.",
+    "categoriesNoteCount": "{count, plural, =0{Brak notatek} =1{1 notatka} few{{count} notatki} many{{count} notatek} other{{count} notatki}}",
+    "@categoriesNoteCount": {
+        "placeholders": { "count": { "type": "int" } }
+    },
     "settingsTitle": "Ustawienia",
     "settingsAppearance": "Wygląd",
     "settingsTheme": "Motyw",
@@ -85,11 +198,41 @@
     "settingsNotes": "Notatki",
     "settingsCategories": "Kategorie",
     "settingsCategoriesDescription": "Zarządzaj kategoriami notatek",
+    "settingsThemeLight": "Jasny",
+    "settingsThemeDark": "Ciemny",
     "settingsReminders": "Przypomnienia",
-    "settingsRemindersDescription": "Powiadomienia o notatkach",
+    "settingsRemindersOn": "Przypomnienia o wydarzeniach mogą przychodzić",
+    "settingsRemindersOff": "Powiadomienia są wyłączone, przypomnienia nie dotrą",
+    "settingsRemindersDenied": "Włącz powiadomienia dla aplikacji Scanote w ustawieniach telefonu",
     "settingsAccount": "Konto",
+    "settingsManageAccount": "Zarządzaj kontem",
+    "accountTitle": "Konto",
+    "accountSignOutDescription": "Kończy sesję na tym telefonie",
+    "accountDisconnect": "Odłącz konto",
+    "accountDisconnectDescription": "Cofa dostęp przyznany aplikacji Scanote",
+    "accountDisconnectTitle": "Odłączyć to konto?",
+    "accountDisconnectMessage": "Scanote straci dostęp do Twojego profilu Google. Notatki zostaną na tym telefonie.",
     "settingsSignOut": "Wyloguj się",
     "settingsGuest": "Bez konta",
     "settingsAbout": "O aplikacji",
-    "settingsAppVersion": "Wersja aplikacji"
+    "settingsAppVersion": "Wersja aplikacji",
+
+    "settingsBackup": "Kopia zapasowa",
+    "settingsBackupExport": "Eksportuj na Dysk Google",
+    "settingsBackupExportDescription": "Zapisuje wszystkie notatki jako plik na Twoim Dysku",
+    "settingsBackupImport": "Importuj z Dysku Google",
+    "settingsBackupImportDescription": "Dodaje notatki z najnowszej kopii",
+    "backupExportDone": "{count, plural, =0{Nie było czego zapisać} =1{Zapisano 1 notatkę na Dysku Google} few{Zapisano {count} notatki na Dysku Google} many{Zapisano {count} notatek na Dysku Google} other{Zapisano {count} notatki na Dysku Google}}",
+    "@backupExportDone": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "backupImportDone": "{count, plural, =0{Wszystko z kopii już tu jest} =1{Dodano 1 notatkę z kopii} few{Dodano {count} notatki z kopii} many{Dodano {count} notatek z kopii} other{Dodano {count} notatki z kopii}}",
+    "@backupImportDone": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "backupNothingFound": "Nie znaleziono kopii na Twoim Dysku",
+    "backupError": "Nie udało się połączyć z Dyskiem Google",
+
+    "checklistCompleted": "Wszystko odhaczone!",
+    "homeChecklistCompleted": "Lista ukończona"
 }

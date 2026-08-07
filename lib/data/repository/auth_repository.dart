@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:note/core/app_logger/app_logger.dart';
@@ -15,6 +16,7 @@ class AuthRepository {
 
   static const _guestKey = 'auth.isGuest';
   static const _guestValue = 'true';
+  static const _emailScope = 'email';
 
   final GoogleSignIn _googleSignIn;
   final StorageAdapter _storageAdapter;
@@ -45,10 +47,12 @@ class AuthRepository {
     );
   }
 
+  /// Picks the session back up without showing anything, when the platform can
+  /// do so. Null means nobody is signed in and the user has to be asked.
   TaskEither<ErrorDetail, AuthUser?> restoreSession() {
     return tryCatchE(
       () async {
-        final account = await _googleSignIn.signInSilently();
+        final account = await _googleSignIn.attemptLightweightAuthentication();
 
         return right(_toUser(account));
       },
@@ -59,7 +63,28 @@ class AuthRepository {
   TaskEither<ErrorDetail, AuthUser?> signIn() {
     return tryCatchE(
       () async {
-        final account = await _googleSignIn.signIn();
+        GoogleSignInAccount? account;
+
+        try {
+          account = await _googleSignIn.authenticate(scopeHint: const [_emailScope]);
+        } on GoogleSignInException catch (error) {
+          // Google says why it turned the sign in down, and that reason is the
+          // only thing that tells a misconfigured OAuth client apart from a
+          // network fault. It goes to the console, where the logger's own
+          // output cannot be read from outside the debugger.
+          if (kDebugMode) {
+            debugPrint(
+              'SIGNIN_DIAGNOSTIC code=${error.code} '
+              'description=${error.description} details=${error.details}',
+            );
+          }
+
+          // Backing out of the prompt is an answer, not a failure: it just
+          // leaves nobody signed in.
+          if (error.code != GoogleSignInExceptionCode.canceled) {
+            rethrow;
+          }
+        }
 
         return right(_toUser(account));
       },
@@ -68,6 +93,19 @@ class AuthRepository {
 
         return ErrorDetail.fatal(throwable: error, stackTrace: stackTrace);
       },
+    );
+  }
+
+  /// Hands the granted access back to Google, so the next sign in asks for
+  /// permission again. Signing out only ends the session on this device.
+  TaskEither<ErrorDetail, Unit> disconnect() {
+    return tryCatchE(
+      () async {
+        await _googleSignIn.disconnect();
+
+        return right(unit);
+      },
+      (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace),
     );
   }
 

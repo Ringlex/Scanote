@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shown in the system's widget picker, which reads it before the app has
+         a chance to localise anything. -->
+    <string name="widget_description">Your latest notes, and a shortcut to write a new one.</string>
+</resources>

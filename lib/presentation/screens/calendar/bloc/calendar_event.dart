@@ -1,7 +1,7 @@
 part of 'calendar_bloc.dart';
 
 @freezed
-class CalendarEvent with _$CalendarEvent {
+sealed class CalendarEvent with _$CalendarEvent {
   const factory CalendarEvent.onInitiated() = _OnInitiated;
 
   const factory CalendarEvent.onDaySelected({
