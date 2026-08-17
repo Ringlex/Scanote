@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android 12 and up read this instead of android:allowBackup.
+
+    Both routes out of the app are closed for the same reason: a protected note
+    is encrypted with a key held in this phone's Keystore, and no backup or
+    transfer can carry that key. Restoring the database elsewhere would leave
+    the user with notes nothing can open. The app's own Drive backup and its
+    sync exist precisely to move notes between phones, and both handle
+    protected notes deliberately rather than by accident.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="file" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="file" />
+        <exclude domain="external" />
+    </device-transfer>
+</data-extraction-rules>

@@ -211,6 +211,9 @@
     "settingsRemindersOn": "Reminders for your events can arrive",
     "settingsRemindersOff": "Notifications are off, reminders will not arrive",
     "settingsRemindersDenied": "Turn notifications for Scanote back on in your phone's settings",
+    "settingsExactReminders": "Reminders to the minute",
+    "settingsExactRemindersOff": "Reminders currently arrive around the time you set. Tap to allow exact alarms.",
+
     "settingsAccount": "Account",
     "settingsManageAccount": "Manage account",
     "accountTitle": "Account",

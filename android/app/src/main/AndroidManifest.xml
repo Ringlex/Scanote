@@ -1,11 +1,25 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Event reminders: post the notification, schedule it exactly and
-         reschedule everything after a reboot. -->
+         reschedule everything after a reboot.
+
+         SCHEDULE_EXACT_ALARM is the one the user grants and can take back. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- Play restricts USE_EXACT_ALARM to alarm clocks and calendars, and a
+         notes app holding it invites a policy rejection. flutter_local_
+         notifications declares it in its own manifest, so removing it from
+         ours is not enough - it has to be taken back out of the merged one.
+
+         NotificationService handles the consequence: it asks for an exact
+         alarm, and falls back to an inexact one when Android says no, so a
+         reminder arrives in a window rather than not at all. -->
+    <uses-permission
+        android:name="android.permission.USE_EXACT_ALARM"
+        tools:node="remove"/>
 
     <!-- Dictating the contents of a note. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -18,10 +32,20 @@
         </intent>
     </queries>
 
+    <!-- Android's own backup is turned off on purpose. It would copy the notes
+         database into the cloud, but the Keystore key that a protected note is
+         encrypted with cannot be copied with it - so a restore onto a new phone
+         would hand the user ciphertext they can never open. Moving notes
+         between phones is what the app's own backup and sync are for.
+         dataExtractionRules covers the same ground for Android 12 and up,
+         including the direct phone-to-phone transfer. -->
     <application
         android:label="Scanote"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
         <activity
             android:name=".MainActivity"
             android:exported="true"

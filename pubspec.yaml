@@ -57,6 +57,7 @@ dependencies:
   pinput: ^6.0.2
   home_widget: ^0.9.3
   cryptography: ^2.9.0
+  package_info_plus: ^10.2.1
 
 dev_dependencies:
   flutter_test:

@@ -7,7 +7,9 @@ import 'package:note/data/model/backup/backup_result.dart';
 import 'package:note/data/model/error_detail.dart';
 import 'package:note/data/model/sync/sync_result.dart';
 import 'package:note/data/notifications/notification_service.dart';
+import 'package:note/core/app_logger/app_logger.dart';
 import 'package:note/data/repository/backup_repository.dart';
+import 'package:note/data/repository/event_repository.dart';
 import 'package:note/data/repository/settings_repository.dart';
 import 'package:note/data/sync/sync_scheduler.dart';
 import 'package:note/presentation/common/state_type.dart';
@@ -26,14 +28,17 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     required NotificationService notificationService,
     required SettingsRepository settingsRepository,
     required SyncScheduler syncScheduler,
+    required EventRepository eventRepository,
   }) : _backupRepository = backupRepository,
        _notificationService = notificationService,
        _settingsRepository = settingsRepository,
        _syncScheduler = syncScheduler,
+       _eventRepository = eventRepository,
        super(SettingsState.initial(argument: argument)) {
     on<_OnInitiated>(_onInitiated);
     on<_OnNotificationsChecked>(_onNotificationsChecked);
     on<_OnNotificationsRequested>(_onNotificationsRequested);
+    on<_OnExactRemindersRequested>(_onExactRemindersRequested);
     on<_OnExportRequested>(_onExportRequested);
     on<_OnImportRequested>(_onImportRequested);
     on<_OnSyncToggled>(_onSyncToggled);
@@ -44,6 +49,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final NotificationService _notificationService;
   final SettingsRepository _settingsRepository;
   final SyncScheduler _syncScheduler;
+  final EventRepository _eventRepository;
 
   Future<void> _onInitiated(_OnInitiated event, Emitter<SettingsState> emit) async {
     await _readNotifications(emit);
@@ -69,8 +75,26 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(state.copyWith(isNotificationsDenied: false));
   }
 
+  Future<void> _onExactRemindersRequested(_OnExactRemindersRequested event, Emitter<SettingsState> emit) async {
+    await _notificationService.requestExactReminders();
+  }
+
   Future<void> _readNotifications(Emitter<SettingsState> emit) async {
-    emit(state.copyWith(isNotificationsEnabled: await _notificationService.areEnabled()));
+    final wasExact = state.isExactRemindersEnabled;
+    final isExact = await _notificationService.canScheduleExactReminders();
+
+    emit(
+      state.copyWith(isNotificationsEnabled: await _notificationService.areEnabled(), isExactRemindersEnabled: isExact),
+    );
+
+    if (isExact && !wasExact) {
+      final rescheduled = await _eventRepository.rescheduleReminders().run();
+
+      rescheduled.match(
+        (error) => logSevere('Re-setting reminders after exact alarms were granted failed', error.throwable),
+        (count) => logInfo('Re-set $count reminders to the minute'),
+      );
+    }
   }
 
   Future<void> _onExportRequested(_OnExportRequested event, Emitter<SettingsState> emit) async {
@@ -101,8 +125,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       return;
     }
 
-    // Forced, because the setting is only written once the first pass has
-    // shown that Drive access was actually granted.
     final result = await _runSync(emit, force: true);
 
     if (result?.status != SyncStatus.done) {

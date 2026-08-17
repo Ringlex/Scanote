@@ -204,6 +204,9 @@
     "settingsRemindersOn": "Przypomnienia o wydarzeniach mogą przychodzić",
     "settingsRemindersOff": "Powiadomienia są wyłączone, przypomnienia nie dotrą",
     "settingsRemindersDenied": "Włącz powiadomienia dla aplikacji Scanote w ustawieniach telefonu",
+    "settingsExactReminders": "Przypomnienia co do minuty",
+    "settingsExactRemindersOff": "Przypomnienia przychodzą teraz w przybliżonym czasie. Dotknij, aby zezwolić na dokładne alarmy.",
+
     "settingsAccount": "Konto",
     "settingsManageAccount": "Zarządzaj kontem",
     "accountTitle": "Konto",

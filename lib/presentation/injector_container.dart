@@ -56,6 +56,7 @@ Future<void> init({
         notificationService: injector(),
         settingsRepository: injector(),
         syncScheduler: injector(),
+        eventRepository: injector(),
       ),
     );
 }

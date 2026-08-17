@@ -7,11 +7,9 @@ import 'package:note/data/model/event/event.dart';
 import 'package:note/data/notifications/notification_service.dart';
 
 class EventRepository {
-  EventRepository({
-    required DBHelper dbHelper,
-    required NotificationService notificationService,
-  })  : _dbHelper = dbHelper,
-        _notificationService = notificationService;
+  EventRepository({required DBHelper dbHelper, required NotificationService notificationService})
+    : _dbHelper = dbHelper,
+      _notificationService = notificationService;
 
   final DBHelper _dbHelper;
   final NotificationService _notificationService;
@@ -28,38 +26,62 @@ class EventRepository {
   }
 
   TaskEither<ErrorDetail, int> deleteEvent({required int id}) {
-    return _dbHelper.deleteEvent(id: id).flatMap(
-          (deletedRows) => tryCatchE(
-            () async {
-              await _notificationService.cancelReminder(id);
+    return _dbHelper
+        .deleteEvent(id: id)
+        .flatMap(
+          (deletedRows) => tryCatchE(() async {
+            await _notificationService.cancelReminder(id);
 
-              return right(deletedRows);
-            },
-            (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace),
-          ),
+            return right(deletedRows);
+          }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace)),
         );
   }
 
-  TaskEither<ErrorDetail, Event> _applyReminder(Event event) {
-    return tryCatchE(
-      () async {
-        final remindAt = event.remindAt;
+  TaskEither<ErrorDetail, int> rescheduleReminders() {
+    return getEvents().flatMap(
+      (events) => tryCatchE(() async {
+        final now = DateTime.now();
+        var rescheduled = 0;
 
-        if (remindAt == null) {
-          await _notificationService.cancelReminder(event.id!);
-        } else {
+        for (final event in events) {
+          final remindAt = event.remindAt;
+
+          if (event.id == null || remindAt == null || !remindAt.isAfter(now)) {
+            continue;
+          }
+
           await _notificationService.scheduleReminder(
             id: event.id!,
             title: event.title,
             body: _reminderBody(event),
             remindAt: remindAt,
           );
+
+          rescheduled++;
         }
 
-        return right(event);
-      },
-      (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace),
+        return right(rescheduled);
+      }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace)),
     );
+  }
+
+  TaskEither<ErrorDetail, Event> _applyReminder(Event event) {
+    return tryCatchE(() async {
+      final remindAt = event.remindAt;
+
+      if (remindAt == null) {
+        await _notificationService.cancelReminder(event.id!);
+      } else {
+        await _notificationService.scheduleReminder(
+          id: event.id!,
+          title: event.title,
+          body: _reminderBody(event),
+          remindAt: remindAt,
+        );
+      }
+
+      return right(event);
+    }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace));
   }
 
   String _reminderBody(Event event) {

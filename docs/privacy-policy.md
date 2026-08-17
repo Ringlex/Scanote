@@ -8,16 +8,20 @@
 
 Scanote nie ma własnych serwerów. Nie zbieramy statystyk, nie wyświetlamy reklam i nie
 przekazujemy niczego reklamodawcom ani firmom analitycznym. Twoje notatki są przechowywane
-w pamięci telefonu, a kopia zapasowa — jeśli ją włączysz — trafia na **Twój** Dysk Google,
-nie nasz.
+w pamięci telefonu, a kopia zapasowa i synchronizacja — jeśli je włączysz — korzystają
+z **Twojego** Dysku Google, nie naszego.
 
 ## Co zostaje wyłącznie na telefonie
 
 - **Treść notatek, listy zadań, kategorie i wydarzenia** — w bazie danych aplikacji,
-  w prywatnym katalogu, do którego inne aplikacje nie mają dostępu.
+  w prywatnym katalogu, do którego inne aplikacje nie mają dostępu. Opuszczają telefon
+  **tylko wtedy**, gdy sam włączysz kopię zapasową lub synchronizację (opisane niżej).
 - **Zdjęcia skanowane w celu rozpoznania tekstu.** Rozpoznawanie działa **offline, na
-  urządzeniu** (Google ML Kit z modelem wbudowanym w aplikację). Zdjęcie nie jest nigdzie
-  wysyłane ani przez nas przechowywane — po odczytaniu tekstu aplikacja go nie zapisuje.
+  urządzeniu** (Google ML Kit z modelem wbudowanym w aplikację). Zdjęcie **jest zapisywane
+  w pamięci telefonu i pozostaje przy notatce**, żebyś mógł wrócić do oryginału, gdy
+  rozpoznany tekst okaże się niedokładny. **Nigdzie go nie wysyłamy** — nie trafia ani do
+  kopii zapasowej, ani do synchronizacji. Możesz je usunąć pojedynczo w edytorze notatki,
+  a skasowanie notatki usuwa jej zdjęcia razem z nią.
 - **Kody QR i kreskowe** — odczytywane również lokalnie.
 - **Notatki chronione** — ich treść jest szyfrowana algorytmem AES-256-GCM. Klucz
   przechowywany jest w sprzętowym magazynie kluczy Androida (Android Keystore) i **nigdy
@@ -52,6 +56,28 @@ Notatki chronione są przed wysłaniem **ponownie szyfrowane hasłem kopii zapas
 podajesz przy eksporcie. Hasło to nie jest nigdzie zapisywane — ani na telefonie, ani na
 Dysku. **Jeśli je zapomnisz, chronionych notatek z kopii nie odzyska nikt, łącznie z nami.**
 
+### Synchronizacja między urządzeniami (opcjonalna)
+
+Synchronizacja jest **domyślnie wyłączona**. Gdy ją włączysz w ustawieniach, aplikacja
+utrzymuje jeden plik na **Twoim własnym Dysku Google** i zapisuje w nim Twoje notatki, listy
+zadań, kategorie oraz informację o tym, które notatki zostały usunięte. Dzięki temu każdy
+telefon zalogowany na to samo konto Google widzi ten sam zestaw notatek.
+
+W odróżnieniu od kopii zapasowej **synchronizacja działa automatycznie**: plik jest
+odświeżany po każdej zmianie notatki (z kilkusekundowym opóźnieniem) oraz przy ręcznym
+uruchomieniu z ustawień. Obowiązuje ten sam zakres `drive.file` — widzimy wyłącznie plik
+utworzony przez tę aplikację.
+
+**Czego synchronizacja nie obejmuje:**
+
+- **Notatek chronionych.** Ich klucz znajduje się w magazynie kluczy tego telefonu i nie może
+  go opuścić, więc chronione notatki nigdy nie trafiają do pliku synchronizacji.
+- **Zdjęć ze skanów.** Zostają w pamięci telefonu, na którym je zrobiono.
+
+Synchronizację możesz wyłączyć w każdej chwili. Wyłączenie zatrzymuje wysyłanie, ale **nie
+usuwa** pliku z Dysku — korzystają z niego Twoje pozostałe urządzenia. Plik możesz skasować
+samodzielnie na swoim Dysku.
+
 ## Czego nie robimy
 
 - Nie zbieramy danych analitycznych ani statystyk użycia.
@@ -75,7 +101,8 @@ Aplikacja nie posiada żadnego serwera, na który mogłaby wysyłać dane.
 | Biometria | odblokowanie chronionych notatek |
 
 Każdego z tych uprawnień możesz odmówić — aplikacja będzie działać, tracąc tylko związaną
-z nim funkcję.
+z nim funkcję. Wyjątkiem są alarmy dokładne: bez tej zgody przypomnienia nadal przychodzą,
+ale w przybliżonym czasie, a nie co do minuty.
 
 ## Usuwanie danych
 
@@ -84,9 +111,16 @@ trwale. Odinstalowanie aplikacji usuwa wszystkie dane z telefonu, w tym klucz sz
 **po odinstalowaniu chronionych notatek nie da się odzyskać nawet z kopii zapasowej zrobionej
 na tym samym telefonie**, chyba że znasz hasło kopii.
 
-Pliki kopii na Dysku Google należą do Ciebie — możesz je usunąć samodzielnie w dowolnej
-chwili. Dostęp aplikacji do konta Google odbierzesz w ustawieniach swojego konta Google,
-w sekcji aplikacji z dostępem.
+Trwałe skasowanie notatki usuwa również **zdjęcia ze skanów**, które do niej należały.
+
+Pliki kopii zapasowej i plik synchronizacji na Dysku Google należą do Ciebie — możesz je
+usunąć samodzielnie w dowolnej chwili. Dostęp aplikacji do konta Google odbierzesz
+w ustawieniach swojego konta Google, w sekcji aplikacji z dostępem.
+
+Aplikacja **nie korzysta z automatycznej kopii zapasowej Androida**. Notatki chronione są
+zaszyfrowane kluczem, którego systemowa kopia nie obejmuje, więc przywrócone na nowym
+telefonie byłyby nieczytelne. Do przeniesienia notatek służy kopia zapasowa lub
+synchronizacja opisane wyżej.
 
 ## Dzieci
 
@@ -114,15 +148,19 @@ W sprawach dotyczących prywatności: [UZUPEŁNIĆ ADRES E-MAIL]
 
 Scanote has no servers of its own. We collect no analytics, show no adverts, and pass
 nothing to advertisers or analytics companies. Your notes live in your phone's storage, and
-a backup — if you turn one on — goes to **your** Google Drive, not ours.
+backup and sync — if you turn them on — use **your** Google Drive, not ours.
 
 ## What never leaves the phone
 
 - **Note contents, checklists, categories and events**, in the app's own database, in a
-  private directory other apps cannot read.
+  private directory other apps cannot read. They leave the phone **only** if you turn on
+  backup or sync yourself, both described below.
 - **Photographs taken to read text from.** Recognition runs **offline, on the device**
-  (Google ML Kit with a model bundled into the app). The photo is never uploaded and is not
-  kept by the app once the text has been read.
+  (Google ML Kit with a model bundled into the app). The photo **is saved on the phone and
+  kept with the note**, so that you can go back to the original when the recognised text
+  turns out to be wrong. **We never upload it** — it goes into neither the backup nor the
+  sync. You can remove pictures one by one in the note editor, and deleting a note takes its
+  pictures with it.
 - **QR and barcodes**, also read locally.
 - **Protected notes**, whose contents are encrypted with AES-256-GCM. The key is held in the
   Android Keystore and **never leaves the device**. Reading one requires your fingerprint or
@@ -155,6 +193,27 @@ Protected notes are **re-encrypted with the backup passphrase** you choose at ex
 That passphrase is stored nowhere, neither on the phone nor on Drive. **If you forget it, the
 protected notes in that backup cannot be recovered by anyone, ourselves included.**
 
+### Sync across devices (optional)
+
+Sync is **off by default**. When you turn it on in settings, the app keeps a single file on
+**your own Google Drive** holding your notes, checklists, categories and a record of which
+notes you deleted. That is what lets every phone signed in to the same Google account show
+the same set of notes.
+
+Unlike the backup, **sync runs by itself**: the file is refreshed after each change to a note
+(a few seconds later) and whenever you run it by hand from settings. The same `drive.file`
+scope applies — we see only the file this app created.
+
+**What sync does not carry:**
+
+- **Protected notes.** Their key lives in this phone's keystore and cannot leave it, so
+  protected notes never go into the sync file.
+- **Scanned pictures.** They stay on the phone that took them.
+
+You can turn sync off at any time. Doing so stops the uploads but does **not** delete the
+file from Drive, because your other devices are still using it. You may delete that file
+yourself on your Drive.
+
 ## What we do not do
 
 - No analytics or usage statistics.
@@ -177,7 +236,9 @@ The app has no server to send data to.
 | Internet | Google Drive backup and signing in, nothing else |
 | Biometrics | unlocking protected notes |
 
-You may refuse any of these; the app keeps working and only loses the feature concerned.
+You may refuse any of these; the app keeps working and only loses the feature concerned. Exact
+alarms are the exception: without that permission reminders still arrive, but around the time
+you set rather than to the minute.
 
 ## Deleting your data
 
@@ -186,9 +247,15 @@ Uninstalling the app removes all data from the phone, including the encryption k
 **after uninstalling, protected notes cannot be recovered even from a backup made on that
 same phone**, unless you know the backup passphrase.
 
-Backup files on Google Drive are yours and you may delete them at any time. You can revoke
-the app's access to your Google account in your Google account settings, under connected
-apps.
+Destroying a note for good also removes the **scanned pictures** that belonged to it.
+
+Backup files and the sync file on Google Drive are yours and you may delete them at any
+time. You can revoke the app's access to your Google account in your Google account
+settings, under connected apps.
+
+The app **does not use Android's automatic backup**. Protected notes are encrypted with a key
+that the system backup cannot include, so restoring them onto a new phone would leave them
+unreadable. Use the backup or the sync described above to move notes instead.
 
 ## Children
 

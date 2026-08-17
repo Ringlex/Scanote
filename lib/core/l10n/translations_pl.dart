@@ -548,6 +548,13 @@ class TranslationsPl extends Translations {
       'Włącz powiadomienia dla aplikacji Scanote w ustawieniach telefonu';
 
   @override
+  String get settingsExactReminders => 'Przypomnienia co do minuty';
+
+  @override
+  String get settingsExactRemindersOff =>
+      'Przypomnienia przychodzą teraz w przybliżonym czasie. Dotknij, aby zezwolić na dokładne alarmy.';
+
+  @override
   String get settingsAccount => 'Konto';
 
   @override

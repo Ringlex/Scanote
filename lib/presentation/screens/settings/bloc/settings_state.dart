@@ -11,9 +11,8 @@ abstract class SettingsState with _$SettingsState {
     BackupTask? backupTask,
     BackupResult? backupResult,
     @Default(false) bool isNotificationsEnabled,
-
     @Default(false) bool isNotificationsDenied,
-
+    @Default(true) bool isExactRemindersEnabled,
     @Default(false) bool isSyncEnabled,
     @Default(StateType.initial) StateType syncType,
     SyncResult? syncResult,

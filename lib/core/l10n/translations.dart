@@ -1010,6 +1010,18 @@ abstract class Translations {
   /// **'Turn notifications for Scanote back on in your phone\'s settings'**
   String get settingsRemindersDenied;
 
+  /// No description provided for @settingsExactReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders to the minute'**
+  String get settingsExactReminders;
+
+  /// No description provided for @settingsExactRemindersOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders currently arrive around the time you set. Tap to allow exact alarms.'**
+  String get settingsExactRemindersOff;
+
   /// No description provided for @settingsAccount.
   ///
   /// In en, this message translates to:

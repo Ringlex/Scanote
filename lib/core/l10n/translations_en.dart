@@ -530,6 +530,13 @@ class TranslationsEn extends Translations {
       'Turn notifications for Scanote back on in your phone\'s settings';
 
   @override
+  String get settingsExactReminders => 'Reminders to the minute';
+
+  @override
+  String get settingsExactRemindersOff =>
+      'Reminders currently arrive around the time you set. Tap to allow exact alarms.';
+
+  @override
   String get settingsAccount => 'Account';
 
   @override

@@ -9,6 +9,7 @@ import 'package:note/core/l10n/translations_extension.dart';
 import 'package:note/core/theme/theme.dart';
 import 'package:note/data/model/backup/backup_result.dart';
 import 'package:note/data/model/sync/sync_result.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:note/presentation/common/app_message.dart';
 import 'package:note/presentation/screens/settings/widgets/backup_passphrase_dialog.dart';
 import 'package:note/presentation/injector_container.dart';
@@ -40,13 +41,23 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObserver {
   static const _bottomPadding = 96.0;
-  static const _appVersion = '1.0.0';
+
+  String _appVersion = '';
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
+    unawaited(_readAppVersion());
+  }
+
+  Future<void> _readAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+
+    if (mounted) {
+      setState(() => _appVersion = '${info.version} (${info.buildNumber})');
+    }
   }
 
   @override
@@ -137,17 +148,30 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
                         ),
                         BlocBuilder<SettingsBloc, SettingsState>(
                           buildWhen: (previous, current) =>
-                              previous.isNotificationsEnabled != current.isNotificationsEnabled,
-                          builder: (context, state) => _SettingsTile(
-                            icon: state.isNotificationsEnabled
-                                ? Icons.notifications_active_outlined
-                                : Icons.notifications_off_outlined,
-                            title: context.translations.settingsReminders,
-                            subtitle: state.isNotificationsEnabled
-                                ? context.translations.settingsRemindersOn
-                                : context.translations.settingsRemindersOff,
-                            onTap: () =>
-                                context.read<SettingsBloc>().add(const SettingsEvent.onNotificationsRequested()),
+                              previous.isNotificationsEnabled != current.isNotificationsEnabled ||
+                              previous.isExactRemindersEnabled != current.isExactRemindersEnabled,
+                          builder: (context, state) => Column(
+                            children: [
+                              _SettingsTile(
+                                icon: state.isNotificationsEnabled
+                                    ? Icons.notifications_active_outlined
+                                    : Icons.notifications_off_outlined,
+                                title: context.translations.settingsReminders,
+                                subtitle: state.isNotificationsEnabled
+                                    ? context.translations.settingsRemindersOn
+                                    : context.translations.settingsRemindersOff,
+                                onTap: () =>
+                                    context.read<SettingsBloc>().add(const SettingsEvent.onNotificationsRequested()),
+                              ),
+                              if (state.isNotificationsEnabled && !state.isExactRemindersEnabled)
+                                _SettingsTile(
+                                  icon: Icons.timer_outlined,
+                                  title: context.translations.settingsExactReminders,
+                                  subtitle: context.translations.settingsExactRemindersOff,
+                                  onTap: () =>
+                                      context.read<SettingsBloc>().add(const SettingsEvent.onExactRemindersRequested()),
+                                ),
+                            ],
                           ),
                         ),
                       ],
@@ -261,9 +285,6 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
     _onBackupChanged(context, state);
   }
 
-  /// How long ago the last pass was, in words. Null means it has never run on
-  /// this phone, which is what the user sees right after switching sync on and
-  /// before the first pass finishes.
   String _lastSyncedLabel(BuildContext context, DateTime? syncedAt) {
     if (syncedAt == null) {
       return context.translations.settingsSyncNever;
@@ -305,8 +326,6 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
       case SyncStatus.skipped:
         return;
       case SyncStatus.done:
-        // The notes on screen were read before the pass, so anything it brought
-        // back has to be picked up.
         if (result.received > 0) {
           context.read<HomeBloc>().add(const HomeEvent.onInitiated());
         }
