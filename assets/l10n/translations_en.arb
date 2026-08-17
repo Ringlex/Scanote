@@ -240,6 +240,34 @@
     "backupNothingFound": "No backup was found on your Drive",
     "backupError": "Google Drive could not be reached",
 
+    "noteEditorScanImageRemove": "Remove this picture",
+    "noteScanImageCounter": "Scan {position} of {total}",
+    "@noteScanImageCounter": {
+        "placeholders": { "position": { "type": "int" }, "total": { "type": "int" } }
+    },
+    "noteScanImageMissing": "This picture is no longer on the phone",
+
+    "settingsSync": "Sync",
+    "settingsSyncEnabled": "Sync across devices",
+    "settingsSyncDescription": "Keeps your notes the same on every phone signed in to this Google account. Protected notes and scanned pictures stay on this phone only.",
+    "settingsSyncNow": "Sync now",
+    "settingsSyncNever": "Not synced yet",
+    "settingsSyncJustNow": "Synced a moment ago",
+    "settingsSyncMinutesAgo": "{count, plural, =1{Synced 1 minute ago} other{Synced {count} minutes ago}}",
+    "@settingsSyncMinutesAgo": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "settingsSyncHoursAgo": "{count, plural, =1{Synced 1 hour ago} other{Synced {count} hours ago}}",
+    "@settingsSyncHoursAgo": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "settingsSyncUpToDate": "Everything is already up to date",
+    "settingsSyncReceived": "{count, plural, =1{1 note came from your other device} other{{count} notes came from your other devices}}",
+    "@settingsSyncReceived": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "settingsSyncError": "Notes could not be synced",
+
     "checklistCompleted": "All done!",
     "homeChecklistCompleted": "Checklist finished"
 }

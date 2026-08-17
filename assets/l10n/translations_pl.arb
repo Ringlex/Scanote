@@ -233,6 +233,34 @@
     "backupNothingFound": "Nie znaleziono kopii na Twoim Dysku",
     "backupError": "Nie udało się połączyć z Dyskiem Google",
 
+    "noteEditorScanImageRemove": "Usuń to zdjęcie",
+    "noteScanImageCounter": "Skan {position} z {total}",
+    "@noteScanImageCounter": {
+        "placeholders": { "position": { "type": "int" }, "total": { "type": "int" } }
+    },
+    "noteScanImageMissing": "Tego zdjęcia już nie ma w telefonie",
+
+    "settingsSync": "Synchronizacja",
+    "settingsSyncEnabled": "Synchronizuj między urządzeniami",
+    "settingsSyncDescription": "Utrzymuje te same notatki na każdym telefonie zalogowanym na to konto Google. Notatki chronione i zdjęcia ze skanów zostają tylko tutaj.",
+    "settingsSyncNow": "Synchronizuj teraz",
+    "settingsSyncNever": "Jeszcze nie synchronizowano",
+    "settingsSyncJustNow": "Zsynchronizowano przed chwilą",
+    "settingsSyncMinutesAgo": "{count, plural, =1{Zsynchronizowano minutę temu} few{Zsynchronizowano {count} minuty temu} many{Zsynchronizowano {count} minut temu} other{Zsynchronizowano {count} minuty temu}}",
+    "@settingsSyncMinutesAgo": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "settingsSyncHoursAgo": "{count, plural, =1{Zsynchronizowano godzinę temu} few{Zsynchronizowano {count} godziny temu} many{Zsynchronizowano {count} godzin temu} other{Zsynchronizowano {count} godziny temu}}",
+    "@settingsSyncHoursAgo": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "settingsSyncUpToDate": "Wszystko jest już aktualne",
+    "settingsSyncReceived": "{count, plural, =1{1 notatka przyszła z innego urządzenia} few{{count} notatki przyszły z innych urządzeń} many{{count} notatek przyszło z innych urządzeń} other{{count} notatki przyszły z innych urządzeń}}",
+    "@settingsSyncReceived": {
+        "placeholders": { "count": { "type": "int" } }
+    },
+    "settingsSyncError": "Nie udało się zsynchronizować notatek",
+
     "checklistCompleted": "Wszystko odhaczone!",
     "homeChecklistCompleted": "Lista ukończona"
 }

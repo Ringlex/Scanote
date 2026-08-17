@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:note/data/model/bool_int_converter.dart';
 import 'package:note/data/model/note/checklist_item.dart';
+import 'package:note/data/model/note/note_images.dart';
 
 part 'note.freezed.dart';
 part 'note.g.dart';
@@ -12,12 +13,14 @@ abstract class Note with _$Note {
     required String title,
     String? todoList,
     String? noteContents,
-
     @BoolIntConverter() @Default(false) bool isProtected,
     int? categoryId,
     @BoolIntConverter() @Default(false) bool isFavorite,
     DateTime? date,
     DateTime? deletedAt,
+    String? imagePaths,
+    String? uuid,
+    DateTime? updatedAt,
   }) = _Note;
 
   Note._();
@@ -29,6 +32,10 @@ abstract class Note with _$Note {
   bool get isChecklist => todoList != null;
 
   bool get isLocked => isProtected;
+
+  List<String> get imageNames => NoteImages.decode(imagePaths);
+
+  bool get hasImages => imageNames.isNotEmpty;
 
   List<ChecklistItem> get checklistItems => Checklist.decode(todoList);
 

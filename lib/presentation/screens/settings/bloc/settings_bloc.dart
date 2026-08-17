@@ -5,8 +5,11 @@ import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:note/data/model/backup/backup_result.dart';
 import 'package:note/data/model/error_detail.dart';
+import 'package:note/data/model/sync/sync_result.dart';
 import 'package:note/data/notifications/notification_service.dart';
 import 'package:note/data/repository/backup_repository.dart';
+import 'package:note/data/repository/settings_repository.dart';
+import 'package:note/data/sync/sync_scheduler.dart';
 import 'package:note/presentation/common/state_type.dart';
 import 'package:note/presentation/screens/settings/settings_argument.dart';
 
@@ -21,21 +24,30 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     required SettingsArgument argument,
     required BackupRepository backupRepository,
     required NotificationService notificationService,
+    required SettingsRepository settingsRepository,
+    required SyncScheduler syncScheduler,
   }) : _backupRepository = backupRepository,
        _notificationService = notificationService,
+       _settingsRepository = settingsRepository,
+       _syncScheduler = syncScheduler,
        super(SettingsState.initial(argument: argument)) {
     on<_OnInitiated>(_onInitiated);
     on<_OnNotificationsChecked>(_onNotificationsChecked);
     on<_OnNotificationsRequested>(_onNotificationsRequested);
     on<_OnExportRequested>(_onExportRequested);
     on<_OnImportRequested>(_onImportRequested);
+    on<_OnSyncToggled>(_onSyncToggled);
+    on<_OnSyncRequested>(_onSyncRequested);
   }
 
   final BackupRepository _backupRepository;
   final NotificationService _notificationService;
+  final SettingsRepository _settingsRepository;
+  final SyncScheduler _syncScheduler;
 
   Future<void> _onInitiated(_OnInitiated event, Emitter<SettingsState> emit) async {
     await _readNotifications(emit);
+    await _readSync(emit);
   }
 
   Future<void> _onNotificationsChecked(_OnNotificationsChecked event, Emitter<SettingsState> emit) async {
@@ -74,6 +86,71 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       emit,
       task: BackupTask.import,
       run: () => _backupRepository.importFromDrive(passphrase: event.passphrase, dataKey: event.dataKey),
+    );
+  }
+
+  Future<void> _onSyncToggled(_OnSyncToggled event, Emitter<SettingsState> emit) async {
+    if (state.isSyncRunning) {
+      return;
+    }
+
+    if (!event.isEnabled) {
+      await _settingsRepository.writeSyncEnabled(isEnabled: false).run();
+      emit(state.copyWith(isSyncEnabled: false, lastSyncedAt: null));
+
+      return;
+    }
+
+    // Forced, because the setting is only written once the first pass has
+    // shown that Drive access was actually granted.
+    final result = await _runSync(emit, force: true);
+
+    if (result?.status != SyncStatus.done) {
+      return;
+    }
+
+    await _settingsRepository.writeSyncEnabled(isEnabled: true).run();
+    emit(state.copyWith(isSyncEnabled: true));
+  }
+
+  Future<void> _onSyncRequested(_OnSyncRequested event, Emitter<SettingsState> emit) async {
+    await _runSync(emit, force: true);
+  }
+
+  Future<SyncResult?> _runSync(Emitter<SettingsState> emit, {required bool force}) async {
+    if (state.isSyncRunning) {
+      return null;
+    }
+
+    emit(state.copyWith(syncType: StateType.loading, syncResult: null));
+
+    final result = await _syncScheduler.run(force: force);
+
+    final synced = result.match((error) {
+      emit(state.copyWith(syncType: StateType.error));
+
+      return null;
+    }, (success) => success);
+
+    if (synced != null) {
+      await _readSync(emit);
+      emit(state.copyWith(syncType: StateType.success, syncResult: synced));
+    }
+
+    emit(state.copyWith(syncType: StateType.initial, syncResult: null));
+
+    return synced;
+  }
+
+  Future<void> _readSync(Emitter<SettingsState> emit) async {
+    final isEnabled = await _settingsRepository.readSyncEnabled().run();
+    final lastSyncedAt = await _settingsRepository.readLastSyncedAt().run();
+
+    emit(
+      state.copyWith(
+        isSyncEnabled: isEnabled.getOrElse((error) => false),
+        lastSyncedAt: lastSyncedAt.getOrElse((error) => null),
+      ),
     );
   }
 

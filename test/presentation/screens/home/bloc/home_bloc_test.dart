@@ -5,15 +5,20 @@ import 'package:mocktail/mocktail.dart';
 import 'package:note/data/model/categories/category.dart';
 import 'package:note/data/model/error_detail.dart';
 import 'package:note/data/model/note/note.dart';
+import 'package:note/data/model/sync/sync_result.dart';
 import 'package:note/data/repository/note_repository.dart';
+import 'package:note/data/sync/sync_scheduler.dart';
 import 'package:note/presentation/common/state_type.dart';
 import 'package:note/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:note/presentation/screens/home/home_argument.dart';
 
 class _MockNoteRepository extends Mock implements NoteRepository {}
 
+class _MockSyncScheduler extends Mock implements SyncScheduler {}
+
 void main() {
   late _MockNoteRepository noteRepository;
+  late _MockSyncScheduler syncScheduler;
 
   final work = Category(id: 1, name: 'praca');
   final home = Category(id: 2, name: 'dom');
@@ -24,6 +29,9 @@ void main() {
 
   setUp(() {
     noteRepository = _MockNoteRepository();
+    syncScheduler = _MockSyncScheduler();
+
+    when(() => syncScheduler.results).thenAnswer((_) => const Stream<SyncResult>.empty());
 
     when(noteRepository.getNotes).thenAnswer((_) => TaskEither<ErrorDetail, List<Note>>.of(const []));
     when(noteRepository.getDeletedNotes).thenAnswer((_) => TaskEither<ErrorDetail, List<Note>>.of(const []));
@@ -34,7 +42,8 @@ void main() {
     ).thenAnswer((_) => TaskEither<ErrorDetail, int>.of(1));
   });
 
-  HomeBloc buildBloc() => HomeBloc(argument: const HomeArgument(), noteRepository: noteRepository);
+  HomeBloc buildBloc() =>
+      HomeBloc(argument: const HomeArgument(), noteRepository: noteRepository, syncScheduler: syncScheduler);
 
   HomeState seededState() =>
       HomeState.initial(argument: const HomeArgument()).copyWith(type: StateType.loaded, categories: [work, home]);
@@ -103,7 +112,7 @@ void main() {
       act: (bloc) => bloc.add(const HomeEvent.onNoteDeleted(noteId: 7)),
       verify: (_) {
         verify(() => noteRepository.deleteNote(id: 7)).called(1);
-        // The row has to survive: purging here would make undo a lie.
+
         verifyNever(() => noteRepository.purgeNote(id: any(named: 'id')));
       },
     );

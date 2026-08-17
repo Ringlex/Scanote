@@ -17,6 +17,8 @@ import 'package:note/presentation/common/protection_message.dart';
 import 'package:note/data/protection/note_cipher.dart';
 import 'package:note/data/protection/note_protection_service.dart';
 import 'package:note/presentation/common/dimen.dart';
+import 'package:note/presentation/common/widgets/formatted_note_text.dart';
+import 'package:note/presentation/common/widgets/scan_image_strip.dart';
 import 'package:note/presentation/screens/calendar/bloc/calendar_bloc.dart';
 import 'package:note/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:note/presentation/screens/note_editor/note_editor_argument.dart';
@@ -224,14 +226,9 @@ class _NoteDetails extends StatelessWidget {
             child: _CategoryBadge(name: categoryName!),
           ),
         ],
+        if (note.hasImages) ...[Gap.large, ScanImageStrip(names: note.imageNames)],
         Gap.xLarge,
-        if (note.isChecklist)
-          _NoteChecklist(note: note)
-        else
-          SelectableText(
-            note.noteContents ?? '',
-            style: context.textTheme.bodyLarge!.copyWith(color: context.palette.textOnPrimaryColor),
-          ),
+        if (note.isChecklist) _NoteChecklist(note: note) else FormattedNoteText(text: note.noteContents ?? ''),
         _DetectedDates(note: note),
       ],
     );
@@ -364,7 +361,7 @@ class _DetectedDateTile extends StatelessWidget {
             ', ${DateFormat.Hm().format(match.date)}',
             style: context.textTheme.bodyLarge!.copyWith(color: context.palette.textOnPrimaryColor),
           ),
-          // The words the date was read from, so it is clear which one it is.
+
           subtitle: Text(
             match.text,
             style: context.textTheme.bodyMedium!.copyWith(color: context.palette.inactiveColor),

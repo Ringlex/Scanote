@@ -11,8 +11,8 @@ sealed class HomeEvent with _$HomeEvent {
     String? categoryName,
     List<ChecklistItem>? checklistItems,
     DateTime? date,
-
     @Default(false) bool isProtected,
+    @Default(<String>[]) List<String> imageNames,
   }) = _OnNoteSubmitted;
 
   const factory HomeEvent.onNoteDeleted({required int noteId}) = _OnNoteDeleted;

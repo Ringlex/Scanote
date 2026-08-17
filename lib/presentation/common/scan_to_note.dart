@@ -8,9 +8,11 @@ import 'package:note/core/l10n/translations_extension.dart';
 import 'package:note/core/theme/theme.dart';
 import 'package:note/data/model/note/checklist_item.dart';
 import 'package:note/data/model/note/note.dart';
+import 'package:note/data/model/note/note_images.dart';
 import 'package:note/data/model/note/note_title.dart';
 import 'package:note/data/model/note/scanned_text.dart';
 import 'package:note/data/ocr/ocr_service.dart';
+import 'package:note/data/scan/scan_image_store.dart';
 import 'package:note/presentation/common/app_message.dart';
 import 'package:note/presentation/common/dimen.dart';
 import 'package:note/presentation/injector_container.dart';
@@ -27,6 +29,7 @@ Future<void> scanIntoNewNote(BuildContext context) async {
   }
 
   final pages = <List<String>>[];
+  final imageNames = <String>[];
 
   while (true) {
     final picked = await ImagePicker().pickImage(source: source);
@@ -42,6 +45,16 @@ Future<void> scanIntoNewNote(BuildContext context) async {
     }
 
     pages.add(page);
+
+    final imageName = await injector<ScanImageStore>().save(sourcePath: picked.path);
+
+    if (imageName != null) {
+      imageNames.add(imageName);
+    }
+
+    if (!context.mounted) {
+      return;
+    }
 
     final wantsMore = await _askForAnotherPage(context, pageCount: pages.length);
 
@@ -66,7 +79,7 @@ Future<void> scanIntoNewNote(BuildContext context) async {
     NoteEditorScreen.routeName,
     extra: NoteEditorArgument(
       homeBloc: context.read<HomeBloc>(),
-      note: _noteFrom(scanned, pages: pages),
+      note: _noteFrom(scanned, pages: pages, imageNames: imageNames),
     ),
   );
 }
@@ -131,9 +144,11 @@ Future<void> _showProgress(BuildContext context) => showDialog<void>(
   builder: (dialogContext) => Center(child: CircularProgressIndicator(color: dialogContext.palette.accentColor)),
 );
 
-Note _noteFrom(ScannedText scanned, {required List<List<String>> pages}) {
+Note _noteFrom(ScannedText scanned, {required List<List<String>> pages, required List<String> imageNames}) {
+  final imagePaths = NoteImages.encode(imageNames);
+
   if (scanned.kind == ScannedTextKind.checklist) {
-    return Note(title: '', todoList: Checklist.encode(scanned.items));
+    return Note(title: '', todoList: Checklist.encode(scanned.items), imagePaths: imagePaths);
   }
 
   final contents = pages
@@ -141,5 +156,5 @@ Note _noteFrom(ScannedText scanned, {required List<List<String>> pages}) {
       .where((page) => page.isNotEmpty)
       .join('\n\n');
 
-  return Note(title: NoteTitle.fromText(contents), noteContents: contents);
+  return Note(title: NoteTitle.fromText(contents), noteContents: contents, imagePaths: imagePaths);
 }

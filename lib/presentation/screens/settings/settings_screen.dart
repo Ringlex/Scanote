@@ -4,9 +4,11 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:note/core/l10n/translations_extension.dart';
 import 'package:note/core/theme/theme.dart';
 import 'package:note/data/model/backup/backup_result.dart';
+import 'package:note/data/model/sync/sync_result.dart';
 import 'package:note/presentation/common/app_message.dart';
 import 'package:note/presentation/screens/settings/widgets/backup_passphrase_dialog.dart';
 import 'package:note/presentation/injector_container.dart';
@@ -67,6 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
       body: BlocListener<SettingsBloc, SettingsState>(
         listenWhen: (previous, current) =>
             previous.backupType != current.backupType ||
+            previous.syncType != current.syncType ||
             (!previous.isNotificationsDenied && current.isNotificationsDenied),
         listener: _onSettingsChanged,
         child: SafeArea(
@@ -152,6 +155,35 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
                     Gap.large,
                     BlocBuilder<SettingsBloc, SettingsState>(
                       buildWhen: (previous, current) =>
+                          previous.isSyncEnabled != current.isSyncEnabled ||
+                          previous.syncType != current.syncType ||
+                          previous.lastSyncedAt != current.lastSyncedAt,
+                      builder: (context, state) => _SettingsSection(
+                        title: context.translations.settingsSync,
+                        children: [
+                          _SettingsSwitchTile(
+                            icon: state.isSyncEnabled ? Icons.sync : Icons.sync_disabled,
+                            title: context.translations.settingsSyncEnabled,
+                            subtitle: context.translations.settingsSyncDescription,
+                            value: state.isSyncEnabled,
+                            isBusy: state.isSyncRunning,
+                            onChanged: (isEnabled) =>
+                                context.read<SettingsBloc>().add(SettingsEvent.onSyncToggled(isEnabled: isEnabled)),
+                          ),
+                          if (state.isSyncEnabled)
+                            _SettingsTile(
+                              icon: Icons.cloud_sync_outlined,
+                              title: context.translations.settingsSyncNow,
+                              subtitle: _lastSyncedLabel(context, state.lastSyncedAt),
+                              isBusy: state.isSyncRunning,
+                              onTap: () => context.read<SettingsBloc>().add(const SettingsEvent.onSyncRequested()),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Gap.large,
+                    BlocBuilder<SettingsBloc, SettingsState>(
+                      buildWhen: (previous, current) =>
                           previous.backupType != current.backupType || previous.backupTask != current.backupTask,
                       builder: (context, state) => _SettingsSection(
                         title: context.translations.settingsBackup,
@@ -225,7 +257,68 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
       return;
     }
 
+    _onSyncChanged(context, state);
     _onBackupChanged(context, state);
+  }
+
+  /// How long ago the last pass was, in words. Null means it has never run on
+  /// this phone, which is what the user sees right after switching sync on and
+  /// before the first pass finishes.
+  String _lastSyncedLabel(BuildContext context, DateTime? syncedAt) {
+    if (syncedAt == null) {
+      return context.translations.settingsSyncNever;
+    }
+
+    final elapsed = DateTime.now().difference(syncedAt);
+
+    if (elapsed.inMinutes < 1) {
+      return context.translations.settingsSyncJustNow;
+    }
+
+    if (elapsed.inHours < 1) {
+      return context.translations.settingsSyncMinutesAgo(elapsed.inMinutes);
+    }
+
+    if (elapsed.inDays < 1) {
+      return context.translations.settingsSyncHoursAgo(elapsed.inHours);
+    }
+
+    return DateFormat.yMMMd(context.translations.localeName).add_Hm().format(syncedAt);
+  }
+
+  void _onSyncChanged(BuildContext context, SettingsState state) {
+    if (state.syncType == StateType.error) {
+      showAppMessage(context, message: context.translations.settingsSyncError);
+
+      return;
+    }
+
+    final result = state.syncResult;
+
+    if (state.syncType != StateType.success || result == null) {
+      return;
+    }
+
+    switch (result.status) {
+      case SyncStatus.cancelled:
+      case SyncStatus.disabled:
+      case SyncStatus.skipped:
+        return;
+      case SyncStatus.done:
+        // The notes on screen were read before the pass, so anything it brought
+        // back has to be picked up.
+        if (result.received > 0) {
+          context.read<HomeBloc>().add(const HomeEvent.onInitiated());
+        }
+
+        showAppMessage(
+          context,
+          message: result.received > 0
+              ? context.translations.settingsSyncReceived(result.received)
+              : context.translations.settingsSyncUpToDate,
+          isError: false,
+        );
+    }
   }
 
   Future<void> _askForPassphrase(BuildContext context, {required BackupTask? task}) async {
@@ -296,6 +389,47 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
           isError: false,
         );
     }
+  }
+}
+
+class _SettingsSwitchTile extends StatelessWidget {
+  const _SettingsSwitchTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.onChanged,
+    this.isBusy = false,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  final bool isBusy;
+
+  static const _iconSize = 24.0;
+  static const _progressSize = 20.0;
+  static const _progressWidth = 2.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      value: value,
+      onChanged: isBusy ? null : onChanged,
+      activeThumbColor: context.palette.accentColor,
+      secondary: isBusy
+          ? SizedBox(
+              width: _progressSize,
+              height: _progressSize,
+              child: CircularProgressIndicator(strokeWidth: _progressWidth, color: context.palette.accentColor),
+            )
+          : Icon(icon, size: _iconSize, color: context.palette.accentColor),
+      title: Text(title, style: context.textTheme.bodyLarge!.copyWith(color: context.palette.textOnPrimaryColor)),
+      subtitle: Text(subtitle, style: context.textTheme.bodyMedium!.copyWith(color: context.palette.inactiveColor)),
+    );
   }
 }
 

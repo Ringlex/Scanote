@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,8 +13,10 @@ import 'package:note/data/model/note/scanned_text.dart';
 import 'package:note/data/model/note/note_share.dart';
 import 'package:note/data/ocr/ocr_service.dart';
 import 'package:note/data/qr/barcode_service.dart';
+import 'package:note/data/scan/scan_image_store.dart';
 import 'package:note/data/speech/speech_service.dart';
 import 'package:note/presentation/common/app_back_button.dart';
+import 'package:note/presentation/common/widgets/scan_image_strip.dart';
 import 'package:note/presentation/common/app_message.dart';
 import 'package:note/presentation/common/protection_message.dart';
 import 'package:note/data/protection/note_cipher.dart';
@@ -50,6 +54,10 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
 
   late bool _isProtected;
 
+  late List<String> _imageNames;
+
+  late List<String> _initialImageNames;
+
   int _checklistRevision = 0;
   bool _isScanning = false;
 
@@ -78,6 +86,8 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     _checklistItems = note?.checklistItems ?? const [];
     _date = note?.date;
     _isProtected = note?.isProtected ?? false;
+    _imageNames = note?.imageNames ?? const [];
+    _initialImageNames = _imageNames;
   }
 
   @override
@@ -158,6 +168,10 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                   Gap.small,
                   _ChecklistSwitch(isChecklist: _isChecklist, onChanged: _onChecklistChanged),
                   Gap.small,
+                  if (_imageNames.isNotEmpty) ...[
+                    ScanImageStrip(names: _imageNames, onRemoved: _onImageRemoved),
+                    Gap.small,
+                  ],
                   if (!_isChecklist) ...[
                     NoteFormatToolbar(controller: _contentsController, focusNode: _contentsFocusNode),
                     if (_isDictating) ...[Gap.small, const _DictationHint()],
@@ -291,8 +305,22 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
         checklistItems: checklistItems,
         date: _date,
         isProtected: _isProtected,
+        imageNames: _imageNames,
       ),
     );
+  }
+
+  void _onImageRemoved(String name) {
+    setState(() => _imageNames = [..._imageNames]..remove(name));
+  }
+
+  Future<void> _dropRemovedImages() async {
+    final removed = [
+      for (final name in _initialImageNames)
+        if (!_imageNames.contains(name)) name,
+    ];
+
+    await injector<ScanImageStore>().deleteAll(names: removed);
   }
 
   Future<void> _onLockPressed() async {
@@ -351,12 +379,19 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     setState(() => _isScanning = true);
 
     final result = await injector<OcrService>().readLines(imagePath: picked.path).run();
+    final imageName = await injector<ScanImageStore>().save(sourcePath: picked.path);
 
     if (!mounted) {
       return;
     }
 
-    setState(() => _isScanning = false);
+    setState(() {
+      _isScanning = false;
+
+      if (imageName != null) {
+        _imageNames = [..._imageNames, imageName];
+      }
+    });
 
     result.match((error) => showAppMessage(context, message: context.translations.noteEditorScanError), _applyScan);
   }
@@ -455,6 +490,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   void _onSaveStateChanged(BuildContext context, HomeState state) {
     switch (state.saveType) {
       case StateType.success:
+        unawaited(_dropRemovedImages());
         context.pop();
       case StateType.error:
         showAppMessage(context, message: context.translations.noteEditorSaveError);

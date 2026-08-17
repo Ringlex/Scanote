@@ -2,17 +2,19 @@ import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:note/core/app_logger/app_logger.dart';
 import 'package:note/core/fpdarts.dart';
+import 'package:note/core/uuid.dart';
 import 'package:note/data/model/categories/category.dart';
 import 'package:note/data/model/error_detail.dart';
 import 'package:note/data/model/event/event.dart';
 import 'package:note/data/model/note/note.dart';
+import 'package:note/data/model/note/note_images.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DBHelper {
   static const _databaseName = 'note.db';
-  static const _databaseVersion = 7;
+  static const _databaseVersion = 8;
 
   static const binRetention = Duration(days: 30);
 
@@ -67,6 +69,31 @@ class DBHelper {
     if (oldVersion < 7) {
       await db.execute('ALTER TABLE $noteTable ADD COLUMN isProtected INTEGER NOT NULL DEFAULT 0');
     }
+
+    if (oldVersion < 8) {
+      await db.execute('ALTER TABLE $noteTable ADD COLUMN imagePaths TEXT');
+      await db.execute('ALTER TABLE $noteTable ADD COLUMN uuid TEXT');
+      await db.execute('ALTER TABLE $noteTable ADD COLUMN updatedAt TEXT');
+      await _stampExistingNotes(db);
+    }
+  }
+
+  Future<void> _stampExistingNotes(Database db) async {
+    final rows = await db.query(noteTable, columns: ['id'], where: 'uuid IS NULL');
+    final stampedAt = DateTime.now().toIso8601String();
+
+    await db.transaction((txn) async {
+      for (final row in rows) {
+        await txn.update(
+          noteTable,
+          {'uuid': Uuid.v4(), 'updatedAt': stampedAt},
+          where: 'id = ?',
+          whereArgs: [row['id']],
+        );
+      }
+    });
+
+    logInfo('Gave ${rows.length} existing notes an identity for syncing');
   }
 
   Future<void> _createNoteTables(Database db) async {
@@ -84,7 +111,10 @@ class DBHelper {
         categoryId INTEGER,
         isFavorite INTEGER NOT NULL DEFAULT 0,
         date TEXT,
-        deletedAt TEXT
+        deletedAt TEXT,
+        imagePaths TEXT,
+        uuid TEXT,
+        updatedAt TEXT
       )
   ''');
 
@@ -165,9 +195,10 @@ class DBHelper {
   TaskEither<ErrorDetail, int> softDeleteNote({required int id, DateTime? at}) {
     return tryCatchE(() async {
       final db = await database;
+      final deletedAt = (at ?? DateTime.now()).toIso8601String();
       final result = await db.update(
         noteTable,
-        {'deletedAt': (at ?? DateTime.now()).toIso8601String()},
+        {'deletedAt': deletedAt, 'updatedAt': deletedAt},
         where: 'id = ? AND deletedAt IS NULL',
         whereArgs: [id],
       );
@@ -179,31 +210,59 @@ class DBHelper {
   TaskEither<ErrorDetail, int> restoreNote({required int id}) {
     return tryCatchE(() async {
       final db = await database;
-      final result = await db.update(noteTable, {'deletedAt': null}, where: 'id = ?', whereArgs: [id]);
-
-      return right(result);
-    }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace));
-  }
-
-  TaskEither<ErrorDetail, int> purgeNote({required int id}) {
-    return tryCatchE(() async {
-      final db = await database;
-      final result = await db.delete(noteTable, where: 'id = ?', whereArgs: [id]);
-
-      return right(result);
-    }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace));
-  }
-
-  TaskEither<ErrorDetail, int> purgeBin({DateTime? deletedBefore}) {
-    return tryCatchE(() async {
-      final db = await database;
-      final result = await db.delete(
+      final result = await db.update(
         noteTable,
-        where: deletedBefore == null ? 'deletedAt IS NOT NULL' : 'deletedAt IS NOT NULL AND deletedAt < ?',
-        whereArgs: deletedBefore == null ? null : [deletedBefore.toIso8601String()],
+        {'deletedAt': null, 'updatedAt': DateTime.now().toIso8601String()},
+        where: 'id = ?',
+        whereArgs: [id],
       );
 
       return right(result);
+    }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace));
+  }
+
+  TaskEither<ErrorDetail, List<String>> purgeNote({required int id}) {
+    return _purge(where: 'id = ?', whereArgs: [id]);
+  }
+
+  TaskEither<ErrorDetail, List<String>> purgeBin({DateTime? deletedBefore}) {
+    return _purge(
+      where: deletedBefore == null ? 'deletedAt IS NOT NULL' : 'deletedAt IS NOT NULL AND deletedAt < ?',
+      whereArgs: deletedBefore == null ? null : [deletedBefore.toIso8601String()],
+    );
+  }
+
+  TaskEither<ErrorDetail, List<String>> _purge({required String where, List<Object?>? whereArgs}) {
+    return tryCatchE(() async {
+      final db = await database;
+
+      return right(
+        await db.transaction((txn) async {
+          final rows = await txn.query(noteTable, columns: ['imagePaths'], where: where, whereArgs: whereArgs);
+
+          await txn.delete(noteTable, where: where, whereArgs: whereArgs);
+
+          return [for (final row in rows) ...NoteImages.decode(row['imagePaths'] as String?)];
+        }),
+      );
+    }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace));
+  }
+
+  TaskEither<ErrorDetail, List<Note>> getAllNotes() {
+    return tryCatchE(() async {
+      final db = await database;
+      final rows = await db.query(noteTable, orderBy: 'id DESC');
+
+      return right(rows.map(Note.fromJson).toList());
+    }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace));
+  }
+
+  TaskEither<ErrorDetail, Note?> getNoteByUuid({required String uuid}) {
+    return tryCatchE(() async {
+      final db = await database;
+      final rows = await db.query(noteTable, where: 'uuid = ?', whereArgs: [uuid], limit: 1);
+
+      return right(rows.isEmpty ? null : Note.fromJson(rows.first));
     }, (error, stackTrace) => ErrorDetail.fatal(throwable: error, stackTrace: stackTrace));
   }
 

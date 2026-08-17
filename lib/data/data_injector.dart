@@ -13,7 +13,10 @@ import 'package:note/data/repository/event_repository.dart';
 import 'package:note/data/repository/note_repository.dart';
 import 'package:note/data/protection/note_protection_service.dart';
 import 'package:note/data/repository/settings_repository.dart';
+import 'package:note/data/repository/sync_repository.dart';
+import 'package:note/data/scan/scan_image_store.dart';
 import 'package:note/data/share/share_service.dart';
+import 'package:note/data/sync/sync_scheduler.dart';
 import 'package:note/data/widget/widget_service.dart';
 import 'package:note/data/speech/speech_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,10 +24,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 extension DataInjector on GetIt {
   Future<void> registerData({required String apiUrl}) async {
     final sharedPreferences = await SharedPreferences.getInstance();
+    final scanImageStore = ScanImageStore();
 
     await GoogleSignIn.instance.initialize(serverClientId: GoogleAuthConst.serverClientId);
 
+    await scanImageStore.prepare();
+
     this
+      ..registerLazySingleton<ScanImageStore>(() => scanImageStore)
       ..registerLazySingleton<SharedPreferencesAdapter>(
         () => SharedPreferencesAdapter(sharedPreferences: sharedPreferences),
       )
@@ -38,7 +45,9 @@ extension DataInjector on GetIt {
         () => NoteProtectionService(storage: this<SharedPreferencesAdapter>()),
       )
       ..registerLazySingleton<NotificationService>(() => NotificationService())
-      ..registerLazySingleton<NoteRepository>(() => NoteRepository(dbHelper: this<DBHelper>()))
+      ..registerLazySingleton<NoteRepository>(
+        () => NoteRepository(dbHelper: this<DBHelper>(), imageStore: this<ScanImageStore>()),
+      )
       ..registerLazySingleton<GoogleSignIn>(() => GoogleSignIn.instance)
       ..registerLazySingleton<AuthRepository>(
         () => AuthRepository(googleSignIn: this<GoogleSignIn>(), storageAdapter: this<SharedPreferencesAdapter>()),
@@ -50,6 +59,14 @@ extension DataInjector on GetIt {
       ..registerLazySingleton<SettingsRepository>(
         () => SettingsRepository(storageAdapter: this<SharedPreferencesAdapter>()),
       )
+      ..registerLazySingleton<SyncRepository>(
+        () => SyncRepository(
+          noteRepository: this<NoteRepository>(),
+          driveService: this<DriveService>(),
+          settingsRepository: this<SettingsRepository>(),
+        ),
+      )
+      ..registerLazySingleton<SyncScheduler>(() => SyncScheduler(syncRepository: this<SyncRepository>()))
       ..registerLazySingleton<EventRepository>(
         () => EventRepository(dbHelper: this<DBHelper>(), notificationService: this<NotificationService>()),
       );

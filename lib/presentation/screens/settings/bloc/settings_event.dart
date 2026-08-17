@@ -11,4 +11,8 @@ sealed class SettingsEvent with _$SettingsEvent {
   const factory SettingsEvent.onExportRequested({String? passphrase, List<int>? dataKey}) = _OnExportRequested;
 
   const factory SettingsEvent.onImportRequested({String? passphrase, List<int>? dataKey}) = _OnImportRequested;
+
+  const factory SettingsEvent.onSyncToggled({required bool isEnabled}) = _OnSyncToggled;
+
+  const factory SettingsEvent.onSyncRequested() = _OnSyncRequested;
 }

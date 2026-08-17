@@ -40,6 +40,7 @@ Future<void> init({
       (argument, _) => HomeBloc(
         argument: argument,
         noteRepository: injector(),
+        syncScheduler: injector(),
       ),
     )
     ..registerFactoryParam<CalendarBloc, CalendarArgument, void>(
@@ -53,6 +54,8 @@ Future<void> init({
         argument: argument,
         backupRepository: injector(),
         notificationService: injector(),
+        settingsRepository: injector(),
+        syncScheduler: injector(),
       ),
     );
 }

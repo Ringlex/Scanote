@@ -637,6 +637,81 @@ class TranslationsPl extends Translations {
   String get backupError => 'Nie udało się połączyć z Dyskiem Google';
 
   @override
+  String get noteEditorScanImageRemove => 'Usuń to zdjęcie';
+
+  @override
+  String noteScanImageCounter(int position, int total) {
+    return 'Skan $position z $total';
+  }
+
+  @override
+  String get noteScanImageMissing => 'Tego zdjęcia już nie ma w telefonie';
+
+  @override
+  String get settingsSync => 'Synchronizacja';
+
+  @override
+  String get settingsSyncEnabled => 'Synchronizuj między urządzeniami';
+
+  @override
+  String get settingsSyncDescription =>
+      'Utrzymuje te same notatki na każdym telefonie zalogowanym na to konto Google. Notatki chronione i zdjęcia ze skanów zostają tylko tutaj.';
+
+  @override
+  String get settingsSyncNow => 'Synchronizuj teraz';
+
+  @override
+  String get settingsSyncNever => 'Jeszcze nie synchronizowano';
+
+  @override
+  String get settingsSyncJustNow => 'Zsynchronizowano przed chwilą';
+
+  @override
+  String settingsSyncMinutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Zsynchronizowano $count minuty temu',
+      many: 'Zsynchronizowano $count minut temu',
+      few: 'Zsynchronizowano $count minuty temu',
+      one: 'Zsynchronizowano minutę temu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsSyncHoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Zsynchronizowano $count godziny temu',
+      many: 'Zsynchronizowano $count godzin temu',
+      few: 'Zsynchronizowano $count godziny temu',
+      one: 'Zsynchronizowano godzinę temu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsSyncUpToDate => 'Wszystko jest już aktualne';
+
+  @override
+  String settingsSyncReceived(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count notatki przyszły z innych urządzeń',
+      many: '$count notatek przyszło z innych urządzeń',
+      few: '$count notatki przyszły z innych urządzeń',
+      one: '1 notatka przyszła z innego urządzenia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsSyncError => 'Nie udało się zsynchronizować notatek';
+
+  @override
   String get checklistCompleted => 'Wszystko odhaczone!';
 
   @override

@@ -615,6 +615,75 @@ class TranslationsEn extends Translations {
   String get backupError => 'Google Drive could not be reached';
 
   @override
+  String get noteEditorScanImageRemove => 'Remove this picture';
+
+  @override
+  String noteScanImageCounter(int position, int total) {
+    return 'Scan $position of $total';
+  }
+
+  @override
+  String get noteScanImageMissing => 'This picture is no longer on the phone';
+
+  @override
+  String get settingsSync => 'Sync';
+
+  @override
+  String get settingsSyncEnabled => 'Sync across devices';
+
+  @override
+  String get settingsSyncDescription =>
+      'Keeps your notes the same on every phone signed in to this Google account. Protected notes and scanned pictures stay on this phone only.';
+
+  @override
+  String get settingsSyncNow => 'Sync now';
+
+  @override
+  String get settingsSyncNever => 'Not synced yet';
+
+  @override
+  String get settingsSyncJustNow => 'Synced a moment ago';
+
+  @override
+  String settingsSyncMinutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Synced $count minutes ago',
+      one: 'Synced 1 minute ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String settingsSyncHoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Synced $count hours ago',
+      one: 'Synced 1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsSyncUpToDate => 'Everything is already up to date';
+
+  @override
+  String settingsSyncReceived(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count notes came from your other devices',
+      one: '1 note came from your other device',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsSyncError => 'Notes could not be synced';
+
+  @override
   String get checklistCompleted => 'All done!';
 
   @override

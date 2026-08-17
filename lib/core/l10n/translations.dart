@@ -1136,6 +1136,90 @@ abstract class Translations {
   /// **'Google Drive could not be reached'**
   String get backupError;
 
+  /// No description provided for @noteEditorScanImageRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this picture'**
+  String get noteEditorScanImageRemove;
+
+  /// No description provided for @noteScanImageCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan {position} of {total}'**
+  String noteScanImageCounter(int position, int total);
+
+  /// No description provided for @noteScanImageMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This picture is no longer on the phone'**
+  String get noteScanImageMissing;
+
+  /// No description provided for @settingsSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get settingsSync;
+
+  /// No description provided for @settingsSyncEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync across devices'**
+  String get settingsSyncEnabled;
+
+  /// No description provided for @settingsSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeps your notes the same on every phone signed in to this Google account. Protected notes and scanned pictures stay on this phone only.'**
+  String get settingsSyncDescription;
+
+  /// No description provided for @settingsSyncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get settingsSyncNow;
+
+  /// No description provided for @settingsSyncNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced yet'**
+  String get settingsSyncNever;
+
+  /// No description provided for @settingsSyncJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced a moment ago'**
+  String get settingsSyncJustNow;
+
+  /// No description provided for @settingsSyncMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Synced 1 minute ago} other{Synced {count} minutes ago}}'**
+  String settingsSyncMinutesAgo(int count);
+
+  /// No description provided for @settingsSyncHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Synced 1 hour ago} other{Synced {count} hours ago}}'**
+  String settingsSyncHoursAgo(int count);
+
+  /// No description provided for @settingsSyncUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is already up to date'**
+  String get settingsSyncUpToDate;
+
+  /// No description provided for @settingsSyncReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 note came from your other device} other{{count} notes came from your other devices}}'**
+  String settingsSyncReceived(int count);
+
+  /// No description provided for @settingsSyncError.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes could not be synced'**
+  String get settingsSyncError;
+
   /// No description provided for @checklistCompleted.
   ///
   /// In en, this message translates to:

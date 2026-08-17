@@ -95,6 +95,32 @@ class DriveService {
     );
   }
 
+  /// Replaces what [fileId] holds, keeping the same file rather than adding
+  /// another one beside it. A sync rewrites the same document over and over, so
+  /// [upload] would otherwise leave a trail of them behind.
+  TaskEither<ErrorDetail, Unit> update({required String fileId, required String contents}) {
+    return tryCatchE(
+      () async {
+        final headers = await _requireHeaders();
+
+        final response = await _httpClient.patch(
+          Uri.https(_host, '$_uploadPath/$fileId', {'uploadType': 'media'}),
+          headers: {...headers, 'Content-Type': '$_mimeType; charset=UTF-8'},
+          body: utf8.encode(contents),
+        );
+
+        _ensureSuccess(response);
+
+        return right(unit);
+      },
+      (error, stackTrace) {
+        logSevere('Drive update failed', error, stackTrace);
+
+        return ErrorDetail.fatal(throwable: error, stackTrace: stackTrace);
+      },
+    );
+  }
+
   /// The most recently changed file this app wrote whose name starts with
   /// [namePrefix], or null when there is none.
   TaskEither<ErrorDetail, DriveFile?> findLatest({required String namePrefix}) {

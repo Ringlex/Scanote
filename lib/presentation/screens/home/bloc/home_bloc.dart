@@ -8,8 +8,11 @@ import 'package:note/data/model/categories/category.dart';
 import 'package:note/data/model/error_detail.dart';
 import 'package:note/data/model/note/checklist_item.dart';
 import 'package:note/data/model/note/note.dart';
+import 'package:note/data/model/note/note_images.dart';
 import 'package:note/data/model/search_match.dart';
+import 'package:note/data/model/sync/sync_result.dart';
 import 'package:note/data/repository/note_repository.dart';
+import 'package:note/data/sync/sync_scheduler.dart';
 import 'package:note/presentation/common/state_type.dart';
 import 'package:note/presentation/screens/home/home_argument.dart';
 
@@ -18,9 +21,17 @@ part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc({required HomeArgument argument, required NoteRepository noteRepository})
-    : _noteRepository = noteRepository,
-      super(HomeState.initial(argument: argument)) {
+  HomeBloc({
+    required HomeArgument argument,
+    required NoteRepository noteRepository,
+    required SyncScheduler syncScheduler,
+  }) : _noteRepository = noteRepository,
+       _syncScheduler = syncScheduler,
+       super(HomeState.initial(argument: argument)) {
+    _syncSubscription = _syncScheduler.results
+        .where((result) => result.received > 0)
+        .listen((_) => add(const HomeEvent.onInitiated()));
+
     on<_OnInitiated>(_onInitiated);
     on<_OnNoteSubmitted>(_onNoteSubmitted);
     on<_OnFavoriteToggled>(_onFavoriteToggled);
@@ -36,6 +47,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   final NoteRepository _noteRepository;
+  final SyncScheduler _syncScheduler;
+
+  late final StreamSubscription<SyncResult> _syncSubscription;
+
+  @override
+  Future<void> close() async {
+    await _syncSubscription.cancel();
+
+    return super.close();
+  }
 
   Future<void> _onInitiated(_OnInitiated event, Emitter<HomeState> emit) async {
     emit(state.copyWith(type: StateType.loading));
@@ -53,7 +74,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ).flatMap((category) => _noteRepository.saveNote(note: _buildNote(event, category))).run();
 
     await result.match((error) async => emit(state.copyWith(saveType: StateType.error)), (_) async {
-      await _loadContent(emit);
+      await _reloadAndSync(emit);
       emit(state.copyWith(saveType: StateType.success));
       emit(state.copyWith(saveType: StateType.initial));
     });
@@ -67,7 +88,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     await _noteRepository.saveNote(note: note.copyWith(isFavorite: !note.isFavorite)).run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onSearchChanged(_OnSearchChanged event, Emitter<HomeState> emit) async {
@@ -82,7 +103,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     await _noteRepository.resolveCategory(name: name).run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onCategoryRenamed(_OnCategoryRenamed event, Emitter<HomeState> emit) async {
@@ -104,32 +125,32 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     await _noteRepository.renameCategory(category: category.copyWith(name: name)).run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onCategoryDeleted(_OnCategoryDeleted event, Emitter<HomeState> emit) async {
     await _noteRepository.deleteCategory(id: event.id).run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onNoteDeleted(_OnNoteDeleted event, Emitter<HomeState> emit) async {
     await _noteRepository.deleteNote(id: event.noteId).run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onNoteRestored(_OnNoteRestored event, Emitter<HomeState> emit) async {
     await _noteRepository.restoreNote(id: event.noteId).run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onNotePurged(_OnNotePurged event, Emitter<HomeState> emit) async {
     await _noteRepository.purgeNote(id: event.noteId).run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onBinEmptied(_OnBinEmptied event, Emitter<HomeState> emit) async {
     await _noteRepository.emptyBin().run();
-    await _loadContent(emit);
+    await _reloadAndSync(emit);
   }
 
   Future<void> _onChecklistItemToggled(_OnChecklistItemToggled event, Emitter<HomeState> emit) async {
@@ -148,7 +169,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     items[event.itemIndex] = items[event.itemIndex].copyWith(isDone: !items[event.itemIndex].isDone);
 
     await _noteRepository.saveNote(note: note.copyWith(todoList: Checklist.encode(items))).run();
+    await _reloadAndSync(emit);
+  }
+
+  Future<void> _reloadAndSync(Emitter<HomeState> emit) async {
     await _loadContent(emit);
+
+    _syncScheduler.schedule();
   }
 
   Note _buildNote(_OnNoteSubmitted event, Category? category) {
@@ -163,6 +190,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       categoryId: category?.id,
       date: event.date,
       isProtected: event.isProtected,
+      imagePaths: NoteImages.encode(event.imageNames),
     );
   }
 

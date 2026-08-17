@@ -13,6 +13,11 @@ abstract class SettingsState with _$SettingsState {
     @Default(false) bool isNotificationsEnabled,
 
     @Default(false) bool isNotificationsDenied,
+
+    @Default(false) bool isSyncEnabled,
+    @Default(StateType.initial) StateType syncType,
+    SyncResult? syncResult,
+    DateTime? lastSyncedAt,
   }) = _SettingsState;
 
   const SettingsState._();
@@ -24,4 +29,6 @@ abstract class SettingsState with _$SettingsState {
   bool get isBackupRunning => backupType == StateType.loading;
 
   bool isRunning(BackupTask task) => isBackupRunning && backupTask == task;
+
+  bool get isSyncRunning => syncType == StateType.loading;
 }
