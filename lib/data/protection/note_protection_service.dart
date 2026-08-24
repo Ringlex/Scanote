@@ -23,7 +23,7 @@ class NoteProtectionService {
 
   static const _wrappedKeyKey = 'note_protection_wrapped_key';
 
-  static const _channel = MethodChannel('io.robert.note/crypto');
+  static const _channel = MethodChannel('io.ringlex.scanote/crypto');
 
   static const _isAvailableMethod = 'isProtectionAvailable';
   static const _encryptMethod = 'encrypt';

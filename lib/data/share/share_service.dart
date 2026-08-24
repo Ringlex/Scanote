@@ -3,7 +3,7 @@ import 'package:note/core/app_logger/app_logger.dart';
 import 'package:note/data/share/shared_text.dart';
 
 class ShareService {
-  static const _channel = MethodChannel('io.robert.note/share');
+  static const _channel = MethodChannel('io.ringlex.scanote/share');
   static const _consumeMethod = 'consumeSharedText';
 
   static const _textKey = 'text';

@@ -3,7 +3,7 @@ import Flutter
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-  private static let channelName = "io.robert.note/notifications"
+  private static let channelName = "io.ringlex.scanote/notifications"
   private static let openNotificationSettings = "openNotificationSettings"
 
   override func application(

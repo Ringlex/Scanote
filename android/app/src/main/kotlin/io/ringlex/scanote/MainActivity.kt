@@ -1,4 +1,4 @@
-package io.robert.note
+package io.ringlex.scanote
 
 import android.content.Intent
 import android.net.Uri
@@ -14,13 +14,13 @@ import io.flutter.plugin.common.MethodChannel
  */
 class MainActivity: FlutterFragmentActivity() {
     private companion object {
-        const val CHANNEL = "io.robert.note/notifications"
+        const val CHANNEL = "io.ringlex.scanote/notifications"
         const val OPEN_NOTIFICATION_SETTINGS = "openNotificationSettings"
 
-        const val SHARE_CHANNEL = "io.robert.note/share"
+        const val SHARE_CHANNEL = "io.ringlex.scanote/share"
         const val CONSUME_SHARED_TEXT = "consumeSharedText"
 
-        const val CRYPTO_CHANNEL = "io.robert.note/crypto"
+        const val CRYPTO_CHANNEL = "io.ringlex.scanote/crypto"
         const val IS_PROTECTION_AVAILABLE = "isProtectionAvailable"
         const val ENCRYPT = "encrypt"
         const val DECRYPT = "decrypt"

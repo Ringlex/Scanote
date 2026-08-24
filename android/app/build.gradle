@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "io.robert.note"
+    namespace "io.ringlex.scanote"
     // Pinned rather than tracking flutter.compileSdkVersion, so that upgrading
     // the SDK cannot change what the app targets without it being a decision.
     compileSdk 36
@@ -55,7 +55,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.robert.note"
+        applicationId "io.ringlex.scanote"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion

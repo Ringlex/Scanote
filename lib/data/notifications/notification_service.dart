@@ -6,7 +6,7 @@ import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  static const _settingsChannel = MethodChannel('io.robert.note/notifications');
+  static const _settingsChannel = MethodChannel('io.ringlex.scanote/notifications');
   static const _openSettingsMethod = 'openNotificationSettings';
 
   static const _channelId = 'event_reminders';

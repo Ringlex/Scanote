@@ -49,7 +49,7 @@ involved, and confusing them is the usual mistake.
 | **Web** | lets the app ask Google for a token of identity | **yes**, as `serverClientId` |
 
 1. In the Google Cloud Console, enable the **Google Drive API**
-2. Create an **Android OAuth client**: package `io.robert.note`, and the SHA-1 of the key you
+2. Create an **Android OAuth client**: package `io.ringlex.scanote`, and the SHA-1 of the key you
    sign the build with
 3. Create a **Web OAuth client** — the redirect URI fields can be left empty
 4. Put the Web client id into `lib/core/constants/google_auth_const.dart`
@@ -151,18 +151,23 @@ it was scheduled with.
 
 ## Before release
 
-- [ ] A **keystore** for signing, and its **SHA-1** registered on the Android OAuth client —
-      without `android/key.properties` a release build silently falls back to the **debug**
-      signing key, and Play rejects it
-- [ ] With **Play App Signing**, register the fingerprint Google signs with as well
+- [x] A **keystore** for signing — `~/.android/scanote-upload.jks`, with `android/key.properties`
+      pointing at it. Without that file a release build silently falls back to the **debug**
+      signing key and Play rejects it, so `tool/build_release.sh` refuses to run without it
+- [ ] Register the upload key's **SHA-1** on an Android OAuth client, and — because Play
+      re-signs the bundle — **a second client** carrying the fingerprint Google signs with
+      (Play Console → Test and release → Setup → App integrity). One client holds one
+      fingerprint, so each key needs its own
 - [ ] Move the **consent screen** to production — in testing mode tokens expire after 7 days
 - [ ] App name on the consent screen: **Scanote** (it tends to keep the old one)
-- [ ] Publish the [privacy policy](docs/privacy-policy.md) and
-      [terms](docs/terms-of-service.md) at public URLs and enter them in the console
-- [ ] Fill in the bracketed placeholders in both documents
+- [x] [Privacy policy](https://ringlex.github.io/scanote-legal/privacy-policy.html) and
+      [terms](https://ringlex.github.io/scanote-legal/terms-of-service.html) published from
+      `Ringlex/scanote-legal`. The documents here stay the source — copy changes across, or
+      the published text drifts from what the app does
 - [ ] **Data safety form**: notes and categories go to Drive when sync or backup is on; the
       mic reaches the system recogniser; scans and protected notes never leave the phone
-- [ ] Screenshots and a store description
+- [x] Screenshots, feature graphic, icon and both listings — [store/](store/)
+- [ ] Tablet screenshots, and a `pl-PL` set, if the listing is to be localised
 - [ ] Check the name "Scanote" in Google Play and at EUIPO
 - [ ] Decide on a **monetisation** plan, or accept there is none
 

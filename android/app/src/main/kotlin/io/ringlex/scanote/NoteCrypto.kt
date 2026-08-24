@@ -1,4 +1,4 @@
-package io.robert.note
+package io.ringlex.scanote
 
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
@@ -24,7 +24,7 @@ import javax.crypto.spec.GCMParameterSpec
 class NoteCrypto(private val activity: FragmentActivity) {
     companion object {
         private const val KEYSTORE = "AndroidKeyStore"
-        private const val KEY_ALIAS = "io.robert.note.note_key"
+        private const val KEY_ALIAS = "io.ringlex.scanote.note_key"
 
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val GCM_TAG_BITS = 128

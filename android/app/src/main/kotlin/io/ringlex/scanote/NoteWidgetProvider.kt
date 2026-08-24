@@ -1,4 +1,4 @@
-package io.robert.note
+package io.ringlex.scanote
 
 import android.appwidget.AppWidgetManager
 import android.content.Context

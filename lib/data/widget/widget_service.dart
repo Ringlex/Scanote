@@ -4,7 +4,7 @@ import 'package:note/data/model/note/note.dart';
 
 class WidgetService {
   static const _androidProvider = 'NoteWidgetProvider';
-  static const _qualifiedAndroidProvider = 'io.robert.note.NoteWidgetProvider';
+  static const _qualifiedAndroidProvider = 'io.ringlex.scanote.NoteWidgetProvider';
 
   static const _titleKey = 'widget_title';
   static const _emptyKey = 'widget_empty';

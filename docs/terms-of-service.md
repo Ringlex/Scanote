@@ -1,8 +1,8 @@
 # Warunki korzystania — Scanote
 
-**Ostatnia aktualizacja:** [UZUPEŁNIĆ DATĘ]
-**Dostawca:** [UZUPEŁNIĆ IMIĘ I NAZWISKO / NAZWĘ FIRMY]
-**Kontakt:** [UZUPEŁNIĆ ADRES E-MAIL]
+**Ostatnia aktualizacja:** 24 sierpnia 2026
+**Dostawca:** Robert Bajor
+**Kontakt:** robert.bajor110@gmail.com
 
 ## 1. Czym jest Scanote
 
@@ -76,21 +76,21 @@ przepisów.
 
 ## 9. Prawo właściwe
 
-Do niniejszych warunków stosuje się prawo [UZUPEŁNIĆ KRAJ], a spory rozstrzygają sądy
-właściwe dla [UZUPEŁNIĆ MIEJSCOWOŚĆ], o ile przepisy o ochronie konsumentów nie stanowią
+Do niniejszych warunków stosuje się prawo polskie, a spory rozstrzygają sądy
+właściwe dla Rzeszów, o ile przepisy o ochronie konsumentów nie stanowią
 inaczej.
 
 ## 10. Kontakt
 
-[UZUPEŁNIĆ ADRES E-MAIL]
+robert.bajor110@gmail.com
 
 ---
 
 # Terms of Service — Scanote
 
-**Last updated:** [FILL IN DATE]
-**Provider:** [FILL IN NAME / COMPANY]
-**Contact:** [FILL IN EMAIL ADDRESS]
+**Last updated:** 24 August 2026
+**Provider:** Robert Bajor
+**Contact:** robert.bajor110@gmail.com
 
 ## 1. What Scanote is
 
@@ -162,9 +162,9 @@ consumer under mandatory law.
 
 ## 9. Governing law
 
-These terms are governed by the law of [FILL IN COUNTRY], and disputes fall to the courts of
-[FILL IN CITY], unless consumer protection rules provide otherwise.
+These terms are governed by the law of Poland, and disputes fall to the courts of
+Rzeszów, unless consumer protection rules provide otherwise.
 
 ## 10. Contact
 
-[FILL IN EMAIL ADDRESS]
+robert.bajor110@gmail.com

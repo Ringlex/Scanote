@@ -47,3 +47,14 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# Store asset build intermediates
+/store/source/build/
+
+# Artefakty wydania. Sam katalog zostaje, jego zawartosc nie.
+/output/*
+!/output/.gitkeep
+
+# Klucz do podpisywania wydan — nigdy w repozytorium.
+android/key.properties
+*.jks
+*.keystore

@@ -38,10 +38,6 @@ class SpeechService {
 
     await _speech.listen(
       onResult: (result) => onResult(result.recognizedWords, result.finalResult),
-
-      pauseFor: _pauseFor,
-
-      listenFor: _listenFor,
       listenOptions: SpeechListenOptions(
         partialResults: true,
         cancelOnError: true,

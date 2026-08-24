@@ -191,7 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 }
 
 class _DashboardNavigationBar extends StatelessWidget {
-  const _DashboardNavigationBar({super.key});
+  const _DashboardNavigationBar();
 
   static const cornerRadius = 32.0;
 

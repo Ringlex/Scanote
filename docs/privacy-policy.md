@@ -1,8 +1,8 @@
 # Polityka prywatności — Scanote
 
-**Ostatnia aktualizacja:** [UZUPEŁNIĆ DATĘ]
-**Administrator danych:** [UZUPEŁNIĆ IMIĘ I NAZWISKO / NAZWĘ FIRMY]
-**Kontakt:** [UZUPEŁNIĆ ADRES E-MAIL]
+**Ostatnia aktualizacja:** 24 sierpnia 2026
+**Administrator danych:** Robert Bajor
+**Kontakt:** robert.bajor110@gmail.com
 
 ## W skrócie
 
@@ -134,15 +134,15 @@ ostatniej zmiany znajduje się na początku dokumentu.
 
 ## Kontakt
 
-W sprawach dotyczących prywatności: [UZUPEŁNIĆ ADRES E-MAIL]
+W sprawach dotyczących prywatności: robert.bajor110@gmail.com
 
 ---
 
 # Privacy Policy — Scanote
 
-**Last updated:** [FILL IN DATE]
-**Data controller:** [FILL IN NAME / COMPANY]
-**Contact:** [FILL IN EMAIL ADDRESS]
+**Last updated:** 24 August 2026
+**Data controller:** Robert Bajor
+**Contact:** robert.bajor110@gmail.com
 
 ## In short
 
@@ -268,4 +268,4 @@ last change is at the top of this document.
 
 ## Contact
 
-For privacy matters: [FILL IN EMAIL ADDRESS]
+For privacy matters: robert.bajor110@gmail.com
