@@ -103,6 +103,46 @@ scale is the whole job:
 sips -Z 512 assets/icon/app_icon.png --out store/en-US/graphics/icon-512x512.png
 ```
 
+## The developer profile
+
+`developer/` holds the two images for the **Ringlex** developer page, which is a separate
+listing from Scanote's own:
+
+| File | Size | Field |
+|---|---|---|
+| `ringlex-icon-512.png` | 512×512 | developer icon — plain monogram |
+| `ringlex-header-4096.jpg` | 4096×2304 | header image — plain monogram |
+| `ringlex-icon-comic-512.png` | 512×512 | developer icon — comic book |
+| `ringlex-header-comic-4096.png` | 4096×2304 | header image — comic book |
+
+**Two complete sets, one pair of fields.** Upload either the two plain files or the two
+comic ones — mixing them looks like an accident. `brand.py` builds the plain set,
+`brand_comic.py` the comic one.
+
+The plain set follows Scanote's own icon: same Changa, same ink, same green, so the app
+and its publisher read as related. The comic set drops that for black ink lines of
+varying weight, rays out of the centre, halftone dots instead of shading and flat colour;
+the only thing tying it back to the app is the green in the emblem.
+
+Both scripts cap the output at 900 KB, under Play's 1 MB limit, and fall back to JPEG when
+PNG will not fit. The plain header needs that fallback — a gradient across 4096 pixels
+compressed losslessly comes to 7 MB. The comic header does not: flat colour stays a 267 KB
+PNG.
+
+Play crops the header differently on different screens, so everything that must stay
+readable sits in the middle third. The rings are decoration and can be cut without loss.
+
+```bash
+cd store/source
+python3 brand.py       # needs Chrome; no Pillow required
+```
+
+## Data safety and content rating
+
+`data-safety.md` holds the answers to the Data safety form, each traced back to the code
+it follows from. The content rating questionnaire is every answer "No" under the
+"all other app types" category — no ads, no purchases, no user-to-user features.
+
 ## Still missing before submission
 
 - [ ] 7" and 10" tablet screenshots, or Play flags the app as not tablet-optimised

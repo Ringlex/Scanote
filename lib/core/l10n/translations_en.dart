@@ -185,7 +185,8 @@ class TranslationsEn extends Translations {
   }
 
   @override
-  String get homeEmpty => 'No notes yet. Tap + to write the first one.';
+  String get homeEmpty =>
+      'No notes yet. Tap the camera to scan a page, or the pencil to write one.';
 
   @override
   String get homeSearchHint => 'Search notes';

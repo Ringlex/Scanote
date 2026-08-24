@@ -371,7 +371,7 @@ abstract class Translations {
   /// No description provided for @homeEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No notes yet. Tap + to write the first one.'**
+  /// **'No notes yet. Tap the camera to scan a page, or the pencil to write one.'**
   String get homeEmpty;
 
   /// No description provided for @homeSearchHint.

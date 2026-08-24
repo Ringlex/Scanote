@@ -72,7 +72,7 @@
         "placeholders": { "count": { "type": "int" } }
     },
 
-    "homeEmpty": "Nie masz jeszcze notatek. Dotknij +, aby napisać pierwszą.",
+    "homeEmpty": "Nie masz jeszcze notatek. Dotknij aparatu, aby zeskanować kartkę, albo ołówka, aby napisać.",
     "homeSearchHint": "Szukaj w notatkach",
     "homeSearchEmpty": "Nic nie pasuje do „{query}”",
     "@homeSearchEmpty": {

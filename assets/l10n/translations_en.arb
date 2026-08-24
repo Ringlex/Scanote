@@ -78,7 +78,7 @@
         "placeholders": { "count": { "type": "int" } }
     },
 
-    "homeEmpty": "No notes yet. Tap + to write the first one.",
+    "homeEmpty": "No notes yet. Tap the camera to scan a page, or the pencil to write one.",
     "homeSearchHint": "Search notes",
     "homeSearchEmpty": "Nothing matches \"{query}\"",
     "@homeSearchEmpty": {

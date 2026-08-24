@@ -195,7 +195,7 @@ class TranslationsPl extends Translations {
 
   @override
   String get homeEmpty =>
-      'Nie masz jeszcze notatek. Dotknij +, aby napisać pierwszą.';
+      'Nie masz jeszcze notatek. Dotknij aparatu, aby zeskanować kartkę, albo ołówka, aby napisać.';
 
   @override
   String get homeSearchHint => 'Szukaj w notatkach';
